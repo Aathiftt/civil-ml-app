@@ -8,7 +8,7 @@ option = st.sidebar.selectbox("Choose a Tool", [
     "Concrete Strength Calculator",
     "Soil Classification",
     "Specific Gravity of Cement",
-    "Area Converter"
+    "Area Converter","Sieve Analysis"
 ])
 
 # ---------------- Concrete Strength Calculator ----------------
@@ -180,3 +180,59 @@ elif option == "Area Converter":
         st.success(f"Area in m²: {area_m2:.2f} m²")
         st.info(f"Area in cents: {cents:.2f} cents")
         st.info(f"Area in square feet: {sq_feet:.2f} ft²")
+
+# -------------------- Sieve Analysis ------------------------
+elif option == "Sieve Analysis":
+    st.header("Sieve Analysis and PSD Chart")
+
+    num_sieves = st.number_input("Enter number of sieves", min_value=2, max_value=10, value=5)
+
+    st.subheader("Enter sieve details")
+
+    standard_sieves = ['4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
+    sieve_sizes = []
+    retained_percents = []
+
+    for i in range(int(num_sieves)):
+        col1, col2 = st.columns(2)
+        with col1:
+            sieve = st.selectbox(f"Select sieve {i+1}", standard_sieves, key=f"sieve_{i}")
+        with col2:
+            retained = st.number_input(f"% Retained on {sieve}", min_value=0.0, max_value=100.0, value=0.0, key=f"ret_{i}")
+
+        sieve_sizes.append(float(sieve.split()[0]))
+        retained_percents.append(retained)
+
+    if st.button("Analyze"):
+        df = pd.DataFrame({
+            "Sieve Size (mm)": sieve_sizes,
+            "% Retained": retained_percents
+        }).sort_values("Sieve Size (mm)", ascending=False)
+
+        df["Cumulative Retained"] = df["% Retained"].cumsum()
+        df["% Passing"] = 100 - df["Cumulative Retained"]
+
+        st.subheader("Sieve Analysis Table")
+        st.dataframe(df)
+
+        # Plot
+        import matplotlib.pyplot as plt
+
+        fig, ax = plt.subplots()
+        ax.plot(df["Sieve Size (mm)"], df["% Passing"], marker='o', linestyle='-')
+        ax.set_xscale('log')
+        ax.set_xlabel("Sieve Size (mm, log scale)")
+        ax.set_ylabel("% Passing")
+        ax.set_title("Particle Size Distribution Curve")
+        ax.invert_xaxis()
+        ax.grid(True, which='both')
+
+        st.pyplot(fig)
+
+        # Basic classification (placeholder logic)
+        if df["% Passing"].iloc[0] < 10:
+            st.info("Soil appears to be coarse-grained.")
+        elif df["% Passing"].iloc[-1] > 50:
+            st.info("Soil appears to be fine-grained.")
+        else:
+            st.info("Soil is in the intermediate range.")
