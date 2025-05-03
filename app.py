@@ -1,10 +1,4 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 
 st.title("Civil Engineering ML Toolkit")
 
@@ -13,33 +7,19 @@ option = st.sidebar.selectbox("Select Tool", ["Concrete Strength Predictor", "So
 
 # -------------------- Concrete Strength Predictor ------------------------
 if option == "Concrete Strength Predictor":
-    st.header("Concrete Strength Predictor")
+    st.header("Concrete Strength Predictor (Based on CTM Value and Area)")
 
-    @st.cache_data
-    def load_concrete_data():
-        url = "https://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls"
-        return pd.read_excel(url)
+    # Inputs for CTM and Area
+    area = st.number_input("Area (m²)", value=1.0)
+    ctm_value = st.number_input("CTM Value (Tonn)", value=10.0)
 
-    data = load_concrete_data()
-    X = data.drop("Concrete compressive strength(MPa, megapascals) ", axis=1)
-    y = data["Concrete compressive strength(MPa, megapascals) "]
-    model = LinearRegression()
-    model.fit(X, y)
+    # Convert CTM value from tons to N (1 ton = 1000 kg, and 1 kg = 9.81 N)
+    force = ctm_value * 1000 * 9.81  # Force in Newtons
 
-    # Inputs
-    cement = st.number_input("Cement (kg/m³)", value=500.0)
-    slag = st.number_input("Blast Furnace Slag (kg/m³)", value=0.0)
-    fly_ash = st.number_input("Fly Ash (kg/m³)", value=0.0)
-    water = st.number_input("Water (kg/m³)", value=200.0)
-    superplasticizer = st.number_input("Superplasticizer (kg/m³)", value=0.0)
-    coarse_agg = st.number_input("Coarse Aggregate (kg/m³)", value=1000.0)
-    fine_agg = st.number_input("Fine Aggregate (kg/m³)", value=700.0)
-    age = st.number_input("Age (days)", value=28)
+    # Calculate the compressive strength (MPa) using the formula: strength = force / area
+    strength = force / area  # Compressive strength in MPa
 
-    input_data = np.array([[cement, slag, fly_ash, water, superplasticizer, coarse_agg, fine_agg, age]])
-    strength = model.predict(input_data)[0]
-
-    st.success(f"Predicted Compressive Strength: {strength:.2f} MPa")
+    st.success(f"Predicted Concrete Compressive Strength: {strength:.2f} MPa")
 
 # -------------------- Soil Classification ------------------------
 elif option == "Soil Classification":
@@ -89,4 +69,3 @@ elif option == "Soil Classification":
     full_name = get_full_form(predicted_label)
 
     st.success(f"Predicted Soil Type: {predicted_label} - {full_name}")
-
