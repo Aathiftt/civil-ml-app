@@ -111,41 +111,27 @@ elif option == "Soil Classification":
                 st.error("Invalid input values.")
 
     # Calculate the other indices
-    st.subheader("Calculate Other Indices")
-    st.markdown("Please input the values for Liquid Limit, Plastic Limit, Shrinkage Limit, and Natural Water Content to calculate the following indices:")
+st.subheader("Calculate Other Indices")
+st.markdown("Please input the values for Liquid Limit (LL), Plastic Limit (PL), Shrinkage Limit (SL), and Natural Water Content (WC) to calculate the indices:")
 
-    liquid_limit_input = st.number_input("Enter Liquid Limit (%)", min_value=0.0)
-    plastic_limit_input = st.number_input("Enter Plastic Limit (%)", min_value=0.0)
-    shrinkage_limit_input = st.number_input("Enter Shrinkage Limit (%)", min_value=0.0)
-    natural_water_content = st.number_input("Enter Natural Water Content (%)", min_value=0.0)
+LL = st.number_input("Enter Liquid Limit (LL) (%)", min_value=0.0)
+PL = st.number_input("Enter Plastic Limit (PL) (%)", min_value=0.0)
+SL = st.number_input("Enter Shrinkage Limit (SL) (%)", min_value=0.0)
+WC = st.number_input("Enter Natural Water Content (WC) (%)", min_value=0.0)
 
-    if st.button("Calculate Other Indices"):
-        try:
-            # Plasticity Index (PI)
-            pi = liquid_limit_input - plastic_limit_input
+if st.button("Calculate Indices"):
+    if LL <= PL:
+        st.error("Liquid Limit must be greater than Plastic Limit.")
+    else:
+        PI = LL - PL
+        LI = (WC - PL) / PI if PI != 0 else 0
+        CI = (LL - WC) / PI if PI != 0 else 0
+        SI = LL - SL
 
-            # Flow Index (FI) - Using a sample 1 and sample 2 data
-            # Assuming w1 and w2 values are provided or calculated
-            fi = (w1 - w2) / math.log10(n2 / n1) if w1 is not None and w2 is not None else None
-
-            # Toughness Index (TI)
-            ti = pi / fi if fi != 0 else 0
-
-            # Consistency Index (CI) - Assuming a sample water content 'w' is provided
-            ci = (liquid_limit_input - natural_water_content) / pi if pi != 0 else 0
-
-            # Shrinkage Index (SI)
-            si = liquid_limit_input - shrinkage_limit_input
-
-            st.success(f"Plasticity Index (PI) = {pi:.2f}")
-            if fi is not None:
-                st.success(f"Flow Index (FI) = {fi:.2f}")
-            st.success(f"Toughness Index (TI) = {ti:.2f}")
-            st.success(f"Consistency Index (CI) = {ci:.2f}")
-            st.success(f"Shrinkage Index (SI) = {si:.2f}")
-        except Exception as e:
-            st.error(f"Error calculating indices: {str(e)}")
-
+        st.success(f"Plasticity Index (PI) = {PI:.2f}")
+        st.success(f"Liquidity Index (LI) = {LI:.2f}")
+        st.success(f"Consistency Index (CI) = {CI:.2f}")
+        st.success(f"Shrinkage Index (SI) = {SI:.2f}")
 # ---------------- Specific Gravity of Cement ----------------
 elif option == "Specific Gravity of Cement":
     st.header("Specific Gravity of Cement")
