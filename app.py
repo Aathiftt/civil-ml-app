@@ -32,6 +32,7 @@ if option == "Home":
     - Predict **Concrete Strength** using CTM data (Machine Learning)
     - Analyze **Soil Properties** from index limits
     - Calculate **Consistency Limits** for classification
+    - Calculate **Specific Gravity** of cement using Le Chatlier Apparatus
     - Perform **Sieve Analysis** and plot **Particle Size Distribution**
     - Get instant insights and basic soil classification
 
