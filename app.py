@@ -12,14 +12,19 @@ from sklearn.preprocessing import LabelEncoder
 import streamlit as st
 import openai
 
-# Set up OpenAI API key (make sure to set your key securely, don't hardcode in production)
-openai.api_key = "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"
+import streamlit as st
+import openai
 
-# Set page configuration
+# Set your API key securely
+openai.api_key = st.secrets["OPENAI_API_KEY"]  # Recommended for production
+# openai.api_key = "your-key-here"  # For testing only
+
+# Page config
 st.set_page_config(page_title="Civil Engineering Lab Assistant", layout="wide")
 st.title("🧱 Civil Engineering Lab Assistant")
 st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
+# Sidebar option
 option = st.sidebar.selectbox(
     "Choose a module",
     (
@@ -32,160 +37,70 @@ option = st.sidebar.selectbox(
     )
 )
 
-# Function to query OpenAI GPT-3 model
+# Function to get OpenAI response
 def query_chatgpt(prompt):
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",  # You can use other models like "gpt-4" if needed
-            prompt=prompt,
-            max_tokens=150,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # or gpt-4
+            messages=[
+                {"role": "system", "content": "You are a helpful civil engineering assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=200,
             temperature=0.7
         )
-        return response.choices[0].text.strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Error: {str(e)}"
 
-# Custom CSS for positioning the AI chatbot in the right bottom corner
-st.markdown(
-    """
+# Floating chatbot UI
+if option == "Home":
+    st.markdown("""
+    ### 💡 Features:
+    - Predict **Concrete Strength**
+    - Analyze **Soil Properties**
+    - Perform **Sieve Analysis**
+    - Area Converter and more.
+    """)
+
+    # Custom CSS for floating chatbot
+    st.markdown("""
     <style>
-    .floating-chatbot {
+    .floating-chat {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        width: 300px;
-        height: 400px;
-        background-color: #f1f1f1;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 9999;
+        width: 340px;
         padding: 15px;
-        display: flex;
-        flex-direction: column;
-    }
-    .chatbot-header {
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .chatbox {
-        flex-grow: 1;
-        overflow-y: scroll;
-        margin-bottom: 10px;
-        padding: 5px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        height: 250px;
-    }
-    .input-box {
-        display: flex;
-        align-items: center;
-    }
-    .input-box input {
-        width: 80%;
-        padding: 8px;
-        margin-right: 5px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-    }
-    .input-box button {
-        padding: 8px 12px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        background-color: #4CAF50;
+        background-color: #1e1e1e;
         color: white;
-        cursor: pointer;
-    }
-    .input-box button:hover {
-        background-color: #45a049;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        z-index: 9999;
     }
     </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ---------------- AI Chatbot ----------------
-if option == "Home":
-    st.markdown("""
-    This web application is designed to assist students, educators, and professionals in performing common civil engineering lab computations and visualizations with ease.
-
-    ### 💡 Features:
-    - Predict **Concrete Strength** using CTM data (Machine Learning)
-    - Analyze **Soil Properties** from index limits
-    - Calculate **Consistency Limits** for classification
-    - Calculate **Specific Gravity** of cement using Le Chatlier Apparatus
-    - Perform **Sieve Analysis** and plot **Particle Size Distribution**
-    - Calculate and Convert Area of a plot
-    - Get instant insights and basic soil classification
-
-    ### 🔍 How to Use:
-    1. Select a module from the left sidebar.
-    2. Enter your data in the provided fields.
-    3. View results instantly with charts or classifications.
-    4. Use sample values (if unsure) to try out the modules.
-
-    👉 Explore each section using the sidebar. Happy Testing!  
-    """)
-
-    # Add the floating AI Chatbot in the bottom-right corner
-    st.markdown("""
-    <div class="floating-chatbot">
-        <div class="chatbot-header">AI Chatbot</div>
-        <div id="chatbox" class="chatbox"></div>
-        <div class="input-box">
-            <input type="text" id="user_input" placeholder="Ask me anything...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-
-    <script>
-    let chatHistory = [];
-
-    function sendMessage() {
-        const userInput = document.getElementById('user_input').value;
-        if (!userInput.trim()) return;
-
-        // Add user's message to chat history
-        chatHistory.push("<strong>You:</strong> " + userInput);
-        document.getElementById('user_input').value = '';  // Clear input field
-
-        // Display chat history in the chatbox
-        document.getElementById('chatbox').innerHTML = chatHistory.join('<br>');
-
-        // Send user input to the backend using Streamlit's API
-        fetch('/send_message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_input: userInput })
-        })
-        .then(response => response.json())
-        .then(data => {
-            const botResponse = "<strong>Bot:</strong> " + data.bot_response;
-            chatHistory.push(botResponse);
-            document.getElementById('chatbox').innerHTML = chatHistory.join('<br>');
-        });
-    }
-    </script>
     """, unsafe_allow_html=True)
 
-# ---------------- Streamlit API Route for Backend ----------------
-import json
-from flask import Flask, request
+    with st.container():
+        st.markdown('<div class="floating-chat">', unsafe_allow_html=True)
+        st.markdown("**💬 Ask the AI Civil Assistant**")
 
-# Initialize Flask App
-app = Flask(__name__)
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
 
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    data = json.loads(request.data)
-    user_input = data['user_input']
-    # Get response from ChatGPT
-    response = query_chatgpt(user_input)
-    return json.dumps({'bot_response': response})
+        for chat in st.session_state.chat_history:
+            st.markdown(f"**You:** {chat['user']}")
+            st.markdown(f"**Bot:** {chat['bot']}")
 
-# Run Flask app in the Streamlit app (using subprocess or via a proper way)
+        user_input = st.text_input("Type your question here:", key="user_chat_input")
+
+        if user_input:
+            response = query_chatgpt(user_input)
+            st.session_state.chat_history.append({"user": user_input, "bot": response})
+            st.experimental_rerun()
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # ---------------- Concrete Strength Calculator ----------------
