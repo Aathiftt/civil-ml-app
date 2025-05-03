@@ -15,11 +15,13 @@ st.markdown("""
 
 st.title("Civil Engineering ML Toolkit")
 
-# Sidebar menu
 option = st.sidebar.selectbox("Select Tool", [
     "Concrete Strength Calculator", 
     "Soil Classification", 
-    "Specific Gravity of Cement"
+    "Specific Gravity of Cement",
+    "Area Converter"
+])
+
 ])
 
 # ---------------- Concrete Strength Calculator ----------------
@@ -102,6 +104,7 @@ elif option == "Specific Gravity of Cement":
             st.success(f"Specific Gravity = {specific_gravity:.2f} g/cc")
         except ZeroDivisionError:
             st.error("Invalid inputs: Division by zero.")
+            
 # ---------------- Area Converter ----------------
 elif option == "Area Converter":
     st.header("Area Calculator & Converter")
