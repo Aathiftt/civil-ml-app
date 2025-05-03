@@ -1,4 +1,7 @@
 import streamlit as st
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
 
 st.title("Civil Engineering ML Toolkit")
 
@@ -13,13 +16,15 @@ if option == "Concrete Strength Predictor":
     area = st.number_input("Area (m²)", value=1.0)
     ctm_value = st.number_input("CTM Value (Tonn)", value=10.0)
 
-    # Convert CTM value from tons to N (1 ton = 1000 kg, and 1 kg = 9.81 N)
-    force = ctm_value * 1000 * 9.81  # Force in Newtons
+    # Button to calculate
+    if st.button("Calculate Concrete Strength"):
+        # Convert CTM value from tons to N (1 ton = 1000 kg, and 1 kg = 9.81 N)
+        force = ctm_value * 1000 * 9.81  # Force in Newtons
 
-    # Calculate the compressive strength (MPa) using the formula: strength = force / area
-    strength = force / area  # Compressive strength in MPa
+        # Calculate the compressive strength (MPa) using the formula: strength = force / area
+        strength = force / area  # Compressive strength in MPa
 
-    st.success(f"Predicted Concrete Compressive Strength: {strength:.2f} MPa")
+        st.success(f"Predicted Concrete Compressive Strength: {strength:.2f} MPa")
 
 # -------------------- Soil Classification ------------------------
 elif option == "Soil Classification":
@@ -64,8 +69,10 @@ elif option == "Soil Classification":
     ll = st.number_input("Liquid Limit (%)", value=40.0)
     pl = st.number_input("Plastic Limit (%)", value=25.0)
 
-    result = clf.predict([[ll, pl]])
-    predicted_label = label_encoder.inverse_transform(result)[0]
-    full_name = get_full_form(predicted_label)
+    # Button to calculate
+    if st.button("Classify Soil Type"):
+        result = clf.predict([[ll, pl]])
+        predicted_label = label_encoder.inverse_transform(result)[0]
+        full_name = get_full_form(predicted_label)
 
-    st.success(f"Predicted Soil Type: {predicted_label} - {full_name}")
+        st.success(f"Predicted Soil Type: {predicted_label} - {full_name}")
