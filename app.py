@@ -10,7 +10,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
-st.title("🧱 Civil Engineering Lab Assistant",layout='wide')
+
+st.title("🧱 Civil Engineering Lab Assistant")  # Removed layout argument
 st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
 st.markdown("""
@@ -31,6 +32,7 @@ This web application is designed to assist students, educators, and professional
 
 👉 Explore each section using the sidebar. Happy Testing!  
 """)
+
 
 # ---------------- Concrete Strength Calculator ----------------
 if option == "Concrete Strength Calculator":
