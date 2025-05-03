@@ -1,3 +1,41 @@
+import streamlit as st
+import math
+
+st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
+st.title("Civil Engineering Calculator")
+
+option = st.sidebar.selectbox("Choose a Tool", [
+    "Concrete Strength Calculator",
+    "Soil Classification",
+    "Specific Gravity of Cement",
+    "Area Converter"
+])
+
+# ---------------- Concrete Strength Calculator ----------------
+if option == "Concrete Strength Calculator":
+    st.header("Concrete Strength from CTM Reading")
+    st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
+
+    shape = st.selectbox("Choose Shape of Specimen", ["Rectangle", "Circle"])
+
+    if shape == "Rectangle":
+        length = st.number_input("Enter Length (mm)", min_value=0.0)
+        breadth = st.number_input("Enter Breadth (mm)", min_value=0.0)
+        area = length * breadth
+    elif shape == "Circle":
+        radius = st.number_input("Enter Radius (mm)", min_value=0.0)
+        area = math.pi * radius * radius
+
+    ctm = st.number_input("Enter CTM Reading (Tonnes)", min_value=0.0)
+
+    if st.button("Calculate Strength"):
+        if area > 0:
+            force_n = ctm * 1000 * 9.81
+            strength = force_n / area
+            st.success(f"Compressive Strength = {strength:.2f} MPa")
+        else:
+            st.error("Area must be greater than 0.")
+
 # ---------------- Soil Classification ----------------
 elif option == "Soil Classification":
     st.header("Soil Classification Tools")
@@ -107,3 +145,51 @@ elif option == "Soil Classification":
             st.success(f"Shrinkage Index (SI) = {si:.2f}")
         except Exception as e:
             st.error(f"Error calculating indices: {str(e)}")
+
+# ---------------- Specific Gravity of Cement ----------------
+elif option == "Specific Gravity of Cement":
+    st.header("Specific Gravity of Cement")
+    st.markdown("All weights must be entered in grams (g). Result unit: g/cc")
+
+    medium = st.selectbox("Select Medium", ["Kerosene", "Diesel"])
+    sg_medium = 0.79 if medium == "Kerosene" else 0.83
+
+    w1 = st.number_input("Weight of empty flask (g)")
+    w2 = st.number_input("Weight of flask + cement (g)")
+    w3 = st.number_input("Weight of flask + cement + medium (g)")
+    w4 = st.number_input("Weight of flask + medium (g)")
+
+    if st.button("Calculate Specific Gravity"):
+        try:
+            specific_gravity = (w2 - w1) / ((w2 - w1) - (w3 - w4)) * sg_medium
+            st.success(f"Specific Gravity = {specific_gravity:.2f} g/cc")
+        except:
+            st.error("Ensure all weights are entered and denominator is not zero.")
+
+# ---------------- Area Converter ----------------
+elif option == "Area Converter":
+    st.header("Area Calculator and Converter")
+    shape = st.selectbox("Select Shape", ["Rectangle", "Triangle", "Circle"])
+
+    area_m2 = 0
+
+    if shape == "Rectangle":
+        length = st.number_input("Enter Length (m)", min_value=0.0)
+        width = st.number_input("Enter Width (m)", min_value=0.0)
+        area_m2 = length * width
+
+    elif shape == "Triangle":
+        base = st.number_input("Enter Base (m)", min_value=0.0)
+        height = st.number_input("Enter Height (m)", min_value=0.0)
+        area_m2 = 0.5 * base * height
+
+    elif shape == "Circle":
+        radius = st.number_input("Enter Radius (m)", min_value=0.0)
+        area_m2 = math.pi * radius ** 2
+
+    if st.button("Convert Area"):
+        cents = area_m2 / 40.47
+        sq_feet = area_m2 * 10.7639
+        st.success(f"Area in m²: {area_m2:.2f} m²")
+        st.info(f"Area in cents: {cents:.2f} cents")
+        st.info(f"Area in square feet: {sq_feet:.2f} ft²")
