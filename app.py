@@ -62,11 +62,31 @@ elif option == "Soil Classification":
     clf = DecisionTreeClassifier()
     clf.fit(X, y_encoded)
 
+    # Mapping soil types to full forms
+    def get_full_form(code):
+        mapping = {
+            "CL": "Clay with Low Plasticity",
+            "CH": "Clay with High Plasticity",
+            "ML": "Silt with Low Plasticity",
+            "MH": "Silt with High Plasticity",
+            "SC": "Clayey Sand",
+            "SM": "Silty Sand",
+            "SW": "Well-graded Sand",
+            "SP": "Poorly-graded Sand",
+            "GW": "Well-graded Gravel",
+            "GP": "Poorly-graded Gravel",
+            "GM": "Silty Gravel",
+            "GC": "Clayey Gravel"
+        }
+        return mapping.get(code, "Unknown Soil Type")
+
     # User inputs
     ll = st.number_input("Liquid Limit (%)", value=40.0)
     pl = st.number_input("Plastic Limit (%)", value=25.0)
 
     result = clf.predict([[ll, pl]])
     predicted_label = label_encoder.inverse_transform(result)[0]
+    full_name = get_full_form(predicted_label)
 
-    st.success(f"Predicted Soil Type: {predicted_label}")
+    st.success(f"Predicted Soil Type: {predicted_label} - {full_name}")
+
