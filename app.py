@@ -1,34 +1,44 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+
+# Pointer fix for dropdowns
+st.markdown("""
+    <style>
+    .stSelectbox > div {
+        cursor: pointer !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 st.title("Civil Engineering ML Toolkit")
 
 # Sidebar menu
-option = st.sidebar.selectbox("Select Tool", ["Concrete Strength Predictor", "Soil Classification", "Specific Gravity of Cement"])
+option = st.sidebar.selectbox("Select Tool", [
+    "Concrete Strength Calculator", 
+    "Soil Classification", 
+    "Specific Gravity of Cement"
+])
 
-# -------------------- Concrete Strength Predictor ------------------------
-if option == "Concrete Strength Predictor":
-    st.header("Concrete Strength Predictor")
+# ---------------- Concrete Strength Calculator ----------------
+if option == "Concrete Strength Calculator":
+    st.header("Concrete Strength from CTM Reading")
+    st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
 
-    st.subheader("Input")
-    area = st.number_input("Area of Specimen (mm²)", value=2250.0, format="%.2f")
-    ctm_reading = st.number_input("CTM Reading (tonnes)", value=7.5, format="%.2f")
+    area = st.number_input("Enter Area (mm²)", value=1500.0)
+    ctm = st.number_input("Enter CTM Reading (Tonnes)", value=10.0)
 
-    if st.button("Calculate Compressive Strength"):
-        force_n = ctm_reading * 1000 * 9.81  # Convert tonnes to Newtons
-        strength_mpa = force_n / area  # 1 MPa = 1 N/mm²
-        st.success(f"Compressive Strength: {strength_mpa:.2f} MPa")
+    if st.button("Calculate Strength"):
+        force_n = ctm * 1000 * 9.81  # Convert ton to N
+        strength = force_n / area  # MPa = N/mm²
+        st.success(f"Compressive Strength = {strength:.2f} MPa")
 
-# -------------------- Soil Classification ------------------------
+# ---------------- Soil Classification ----------------
 elif option == "Soil Classification":
     st.header("Soil Classification Based on Index Properties")
 
-    # Sample data
     soil_data = {
         "Liquid Limit": [30, 60, 45, 40, 50, 35],
         "Plastic Limit": [20, 25, 30, 28, 33, 24],
@@ -71,27 +81,25 @@ elif option == "Soil Classification":
         full_name = get_full_form(predicted_label)
         st.success(f"Predicted Soil Type: {predicted_label} - {full_name}")
 
-# -------------------- Specific Gravity of Cement ------------------------
+# ---------------- Specific Gravity of Cement ----------------
 elif option == "Specific Gravity of Cement":
-    st.header("Specific Gravity of Cement")
-    st.markdown("**All weights must be in grams (g). Output unit: g/cc**")
+    st.header("Specific Gravity of Cement Calculator")
+    st.markdown("All weights should be in **grams (g)**. Specific gravity is in **g/cc**.")
+    st.markdown("**Formula:** SG = (W2 - W1) / ((W2 - W1) - (W3 - W4)) × SG of Medium")
+
+    w1 = st.number_input("Weight of Empty Flask (W1)", value=135.0)
+    w2 = st.number_input("Weight of Flask + Cement (W2)", value=185.0)
+    w3 = st.number_input("Weight of Flask + Cement + Medium (W3)", value=390.0)
+    w4 = st.number_input("Weight of Flask + Medium (W4)", value=348.0)
 
     medium = st.selectbox("Select Medium", ["Kerosene", "Diesel"])
     sg_medium = 0.79 if medium == "Kerosene" else 0.83
 
-    w1 = st.number_input("Weight of empty flask (W1) [g]", value=135.0)
-    w2 = st.number_input("Weight of flask + cement (W2) [g]", value=185.0)
-    w3 = st.number_input("Weight of flask + cement + medium (W3) [g]", value=390.0)
-    w4 = st.number_input("Weight of flask + medium only (W4) [g]", value=348.0)
-
     if st.button("Calculate Specific Gravity"):
         try:
             numerator = w2 - w1
-            denominator = (w2 - w1) - ((w3 - w4) * sg_medium)
-            if denominator == 0:
-                st.error("Division by zero in denominator. Check your values.")
-            else:
-                sg_cement = numerator / denominator
-                st.success(f"Specific Gravity of Cement = {sg_cement:.2f} g/cc")
-        except Exception as e:
-            st.error(f"Error in calculation: {e}")
+            denominator = ((w2 - w1) - (w3 - w4)) * sg_medium
+            specific_gravity = numerator / denominator
+            st.success(f"Specific Gravity = {specific_gravity:.2f} g/cc")
+        except ZeroDivisionError:
+            st.error("Invalid inputs: Division by zero.")
