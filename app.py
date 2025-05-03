@@ -18,8 +18,8 @@ option = st.sidebar.selectbox(
     (
         "Home",
         "Concrete Strength Calculator",
-        "Soil Properties",
-        "Consistency Limits",
+        "Soil Classification",
+        "Specific Gravity of Cement",
         "Sieve Analysis"
     )
 )
