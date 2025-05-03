@@ -8,11 +8,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-
-import streamlit as st
-import openai
-
-import streamlit as st
 import openai
 
 # Set your API key securely
@@ -46,7 +41,7 @@ def query_chatgpt(prompt):
                 {"role": "system", "content": "You are a helpful civil engineering assistant."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=200,
+            max_tokens=50,
             temperature=0.7
         )
         return response.choices[0].message.content.strip()
