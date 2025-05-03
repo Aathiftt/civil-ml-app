@@ -10,9 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import openai
 
-# Set your API key securely
-openai.api_key = st.secrets["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"]  # Recommended for production
-# openai.api_key = "your-key-here"  # For testing only
+openai.api_key = st.secrets["openai_api_key"]  # Correct usage
 
 # Page config
 st.set_page_config(page_title="Civil Engineering Lab Assistant", layout="wide")
