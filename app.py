@@ -1,125 +1,158 @@
 import streamlit as st
+import math
 import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 
-st.title("Civil Engineering ML Toolkit")
+st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
+st.title("Civil Engineering Calculator")
 
-# Sidebar menu
-option = st.sidebar.selectbox("Select Tool", [
-    "Concrete Strength Predictor", 
-    "Soil Classification", 
-    "Area Calculator"
+option = st.sidebar.selectbox("Choose a Tool", [
+    "Concrete Strength Calculator",
+    "Soil Classification",
+    "Specific Gravity of Cement",
+    "Area Converter"
 ])
 
-# -------------------- Concrete Strength Predictor ------------------------
-if option == "Concrete Strength Predictor":
-    st.header("Concrete Strength Predictor")
+# ---------------- Concrete Strength Calculator ----------------
+if option == "Concrete Strength Calculator":
+    st.header("Concrete Strength from CTM Reading")
+    st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
 
-    @st.cache_data
-    def load_concrete_data():
-        url = "https://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls"
-        return pd.read_excel(url)
-
-    data = load_concrete_data()
-    X = data.drop("Concrete compressive strength(MPa, megapascals) ", axis=1)
-    y = data["Concrete compressive strength(MPa, megapascals) "]
-    model = LinearRegression()
-    model.fit(X, y)
-
-    # Inputs
-    cement = st.number_input("Cement (kg/m³)", value=500.0)
-    slag = st.number_input("Blast Furnace Slag (kg/m³)", value=0.0)
-    fly_ash = st.number_input("Fly Ash (kg/m³)", value=0.0)
-    water = st.number_input("Water (kg/m³)", value=200.0)
-    superplasticizer = st.number_input("Superplasticizer (kg/m³)", value=0.0)
-    coarse_agg = st.number_input("Coarse Aggregate (kg/m³)", value=1000.0)
-    fine_agg = st.number_input("Fine Aggregate (kg/m³)", value=700.0)
-    age = st.number_input("Age (days)", value=28)
-
-    input_data = np.array([[cement, slag, fly_ash, water, superplasticizer, coarse_agg, fine_agg, age]])
-    strength = model.predict(input_data)[0]
-
-    st.success(f"Predicted Compressive Strength: {strength:.2f} MPa")
-
-# -------------------- Soil Classification ------------------------
-elif option == "Soil Classification":
-    st.header("Soil Classification Based on Index Properties")
-
-    # Example dataset
-    soil_data = {
-        "Liquid Limit": [30, 60, 45, 40, 50, 35],
-        "Plastic Limit": [20, 25, 30, 28, 33, 24],
-        "Soil Type": ["CL", "CH", "CL", "CL", "CH", "CL"]
-    }
-
-    df = pd.DataFrame(soil_data)
-    X = df[["Liquid Limit", "Plastic Limit"]]
-    y = df["Soil Type"]
-
-    label_encoder = LabelEncoder()
-    y_encoded = label_encoder.fit_transform(y)
-
-    clf = DecisionTreeClassifier()
-    clf.fit(X, y_encoded)
-
-    # Mapping soil types to full forms
-    def get_full_form(code):
-        mapping = {
-            "CL": "Clay with Low Plasticity",
-            "CH": "Clay with High Plasticity",
-            "ML": "Silt with Low Plasticity",
-            "MH": "Silt with High Plasticity",
-            "SC": "Clayey Sand",
-            "SM": "Silty Sand",
-            "SW": "Well-graded Sand",
-            "SP": "Poorly-graded Sand",
-            "GW": "Well-graded Gravel",
-            "GP": "Poorly-graded Gravel",
-            "GM": "Silty Gravel",
-            "GC": "Clayey Gravel"
-        }
-        return mapping.get(code, "Unknown Soil Type")
-
-    # User inputs for consistency limits
-    st.subheader("Enter Consistency Limits")
-    ll = st.number_input("Liquid Limit (%)", value=40.0)
-    pl = st.number_input("Plastic Limit (%)", value=25.0)
-
-    # Calculate Plasticity Index
-    pi = ll - pl
-    st.write(f"Plasticity Index (PI): {pi:.2f}")
-
-    result = clf.predict([[ll, pl]])
-    predicted_label = label_encoder.inverse_transform(result)[0]
-    full_name = get_full_form(predicted_label)
-
-    st.success(f"Predicted Soil Type: {predicted_label} - {full_name}")
-
-# -------------------- Area Calculator ------------------------
-elif option == "Area Calculator":
-    st.header("Area Calculator")
-
-    shape = st.selectbox("Select Shape", ["Rectangle", "Triangle", "Circle"])
+    shape = st.selectbox("Choose Shape of Specimen", ["Rectangle", "Circle"])
 
     if shape == "Rectangle":
-        length = st.number_input("Length (m)", value=0.0)
-        width = st.number_input("Width (m)", value=0.0)
-        area = length * width
-    elif shape == "Triangle":
-        base = st.number_input("Base (m)", value=0.0)
-        height = st.number_input("Height (m)", value=0.0)
-        area = 0.5 * base * height
+        length = st.number_input("Enter Length (mm)", min_value=0.0)
+        breadth = st.number_input("Enter Breadth (mm)", min_value=0.0)
+        area = length * breadth
     elif shape == "Circle":
-        radius = st.number_input("Radius (m)", value=0.0)
-        area = np.pi * radius**2
-    else:
-        area = 0.0
+        radius = st.number_input("Enter Radius (mm)", min_value=0.0)
+        area = math.pi * radius * radius
 
-    if area > 0:
-        st.success(f"Calculated Area: {area:.2f} m²")
-    else:
-        st.warning("Please enter valid dimensions.")
+    ctm = st.number_input("Enter CTM Reading (Tonnes)", min_value=0.0)
+
+    if st.button("Calculate Strength"):
+        if area > 0:
+            force_n = ctm * 1000 * 9.81
+            strength = force_n / area
+            st.success(f"Compressive Strength = {strength:.2f} MPa")
+        else:
+            st.error("Area must be greater than 0.")
+
+# ---------------- Soil Classification ----------------
+elif option == "Soil Classification":
+    st.header("Soil Classification Tools")
+
+    consistency_option = st.selectbox("Choose Consistency Limit Type", ["None", "Liquid Limit", "Plastic Limit", "Shrinkage Limit"])
+
+    if consistency_option == "Liquid Limit":
+        st.subheader("Liquid Limit - Casagrande Method")
+        st.markdown("**Description:** The Casagrande method determines the moisture content at which soil changes from plastic to liquid state.")
+
+        st.markdown("### Sample 1")
+        m1_1 = st.number_input("Sample 1 - Mass of container (g)", key="ll_m1_1")
+        m2_1 = st.number_input("Sample 1 - Mass of container + wet soil (g)", key="ll_m2_1")
+        m3_1 = st.number_input("Sample 1 - Mass of container + dry soil (g)", key="ll_m3_1")
+        n1 = st.number_input("Sample 1 - Number of blows", key="ll_n1")
+
+        st.markdown("### Sample 2")
+        m1_2 = st.number_input("Sample 2 - Mass of container (g)", key="ll_m1_2")
+        m2_2 = st.number_input("Sample 2 - Mass of container + wet soil (g)", key="ll_m2_2")
+        m3_2 = st.number_input("Sample 2 - Mass of container + dry soil (g)", key="ll_m3_2")
+        n2 = st.number_input("Sample 2 - Number of blows", key="ll_n2")
+
+        if st.button("Calculate Liquid Limit"):
+            try:
+                w1 = ((m2_1 - m1_1) - (m3_1 - m1_1)) / (m3_1 - m1_1) * 100
+                w2 = ((m2_2 - m1_2) - (m3_2 - m1_2)) / (m3_2 - m1_2) * 100
+
+                flow_index = (w1 - w2) / math.log10(n2 / n1)
+                liquid_limit = (w1 + w2) / 2
+
+                st.success(f"Water content Sample 1 = {w1:.2f}%")
+                st.success(f"Water content Sample 2 = {w2:.2f}%")
+                st.success(f"Liquid Limit = {liquid_limit:.2f}%")
+                st.success(f"Flow Index = {flow_index:.2f}")
+            except:
+                st.error("Check that none of the denominators are zero and all values are entered correctly.")
+
+    elif consistency_option == "Plastic Limit":
+        st.subheader("Plastic Limit")
+        st.markdown("**Description:** The plastic limit is the water content at which soil changes from plastic to semi-solid state.")
+
+        m1 = st.number_input("Mass of container (g)", key="pl_m1")
+        m2 = st.number_input("Mass of container + wet soil (g)", key="pl_m2")
+        m3 = st.number_input("Mass of container + dry soil (g)", key="pl_m3")
+
+        if st.button("Calculate Plastic Limit"):
+            try:
+                plastic_limit = ((m2 - m1) - (m3 - m1)) / (m3 - m1) * 100
+                st.success(f"Plastic Limit = {plastic_limit:.2f}%")
+            except:
+                st.error("Invalid input values.")
+
+    elif consistency_option == "Shrinkage Limit":
+        st.subheader("Shrinkage Limit")
+        st.markdown("**Description:** The shrinkage limit is the maximum water content at which a reduction in water content does not cause a decrease in the volume of a soil sample.")
+
+        m1 = st.number_input("Mass of shrinkage dish (g)", key="sl_m1")
+        m2 = st.number_input("Mass of shrinkage dish + wet soil (g)", key="sl_m2")
+        m3 = st.number_input("Mass of shrinkage dish + dry soil (g)", key="sl_m3")
+        mercury_dish = st.number_input("Mass of dish filled with mercury (g)", key="sl_mercury_dish")
+        mercury_displaced = st.number_input("Weight of mercury after displacement (g)", key="sl_mercury_disp")
+
+        if st.button("Calculate Shrinkage Limit"):
+            try:
+                mass_water = (m2 - m3)
+                mass_dry = (m3 - m1)
+                volume_dry = mercury_dish - mercury_displaced
+                shrinkage_limit = ((mass_water - volume_dry) / mass_dry) * 100
+                st.success(f"Shrinkage Limit = {shrinkage_limit:.2f}%")
+            except:
+                st.error("Invalid input values.")
+
+# ---------------- Specific Gravity of Cement ----------------
+elif option == "Specific Gravity of Cement":
+    st.header("Specific Gravity of Cement")
+    st.markdown("All weights must be entered in grams (g). Result unit: g/cc")
+
+    medium = st.selectbox("Select Medium", ["Kerosene", "Diesel"])
+    sg_medium = 0.79 if medium == "Kerosene" else 0.83
+
+    w1 = st.number_input("Weight of empty flask (g)")
+    w2 = st.number_input("Weight of flask + cement (g)")
+    w3 = st.number_input("Weight of flask + cement + medium (g)")
+    w4 = st.number_input("Weight of flask + medium (g)")
+
+    if st.button("Calculate Specific Gravity"):
+        try:
+            specific_gravity = (w2 - w1) / ((w2 - w1) - (w3 - w4)) * sg_medium
+            st.success(f"Specific Gravity = {specific_gravity:.2f} g/cc")
+        except:
+            st.error("Ensure all weights are entered and denominator is not zero.")
+
+# ---------------- Area Converter ----------------
+elif option == "Area Converter":
+    st.header("Area Calculator and Converter")
+    shape = st.selectbox("Select Shape", ["Rectangle", "Triangle", "Circle"])
+
+    area_m2 = 0
+
+    if shape == "Rectangle":
+        length = st.number_input("Enter Length (m)", min_value=0.0)
+        width = st.number_input("Enter Width (m)", min_value=0.0)
+        area_m2 = length * width
+
+    elif shape == "Triangle":
+        base = st.number_input("Enter Base (m)", min_value=0.0)
+        height = st.number_input("Enter Height (m)", min_value=0.0)
+        area_m2 = 0.5 * base * height
+
+    elif shape == "Circle":
+        radius = st.number_input("Enter Radius (m)", min_value=0.0)
+        area_m2 = math.pi * radius ** 2
+
+    if st.button("Convert Area"):
+        cents = area_m2 / 40.47
+        sq_feet = area_m2 * 10.7639
+        st.success(f"Area in m²: {area_m2:.2f} m²")
+        st.info(f"Area in cents: {cents:.2f} cents")
+        st.info(f"Area in square feet: {sq_feet:.2f} ft²")
