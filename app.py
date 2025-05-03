@@ -236,11 +236,15 @@ if st.button("Analyze"):
 
     st.pyplot(fig)
 
+# Corrected classification based on % passing 4.75 mm sieve
+sieve_4_75_index = df[df["Sieve Size (mm)"] == 4.75].index
 
-        # Basic classification (placeholder logic)
-        if df["% Passing"].iloc[0] < 10:
-            st.info("Soil appears to be coarse-grained.")
-        elif df["% Passing"].iloc[-1] > 50:
-            st.info("Soil appears to be fine-grained.")
-        else:
-            st.info("Soil is in the intermediate range.")
+if not sieve_4_75_index.empty:
+    percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
+    
+    if percent_passing_4_75 > 50:
+        st.info("Soil appears to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+    else:
+        st.info("Soil appears to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
+else:
+    st.warning("4.75 mm sieve not included in input. Cannot determine basic soil type.")
