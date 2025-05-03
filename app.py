@@ -210,32 +210,32 @@ elif option == "Sieve Analysis":
 
         sieve_sizes.append(float(sieve.split()[0]))
         retained_percents.append(retained)
+if st.button("Analyze"):
+    df = pd.DataFrame({
+        "Sieve Size (mm)": sieve_sizes,
+        "% Retained": retained_percents
+    })
 
-    if st.button("Analyze"):
-        df = pd.DataFrame({
-            "Sieve Size (mm)": sieve_sizes,
-            "% Retained": retained_percents
-        }).sort_values("Sieve Size (mm)", ascending=False)
+    df.sort_values("Sieve Size (mm)", ascending=False, inplace=True)  # Ensure descending order
 
-        df["Cumulative Retained"] = df["% Retained"].cumsum()
-        df["% Passing"] = 100 - df["Cumulative Retained"]
+    df["Cumulative Retained"] = df["% Retained"].cumsum()
+    df["% Passing"] = 100 - df["Cumulative Retained"]
 
-        st.subheader("Sieve Analysis Table")
-        st.dataframe(df)
+    st.subheader("Sieve Analysis Table")
+    st.dataframe(df)
 
-        # Plot
-        import matplotlib.pyplot as plt
+    # Plot
+    fig, ax = plt.subplots()
+    ax.plot(df["Sieve Size (mm)"], df["% Passing"], marker='o', linestyle='-')
+    ax.set_xscale('log')
+    ax.invert_xaxis()  # Reverse the X-axis after setting log scale
+    ax.set_xlabel("Sieve Size (mm, log scale)")
+    ax.set_ylabel("% Passing")
+    ax.set_title("Particle Size Distribution Curve")
+    ax.grid(True, which='both')
 
-        fig, ax = plt.subplots()
-        ax.plot(df["Sieve Size (mm)"], df["% Passing"], marker='o', linestyle='-')
-        ax.set_xscale('log')
-        ax.set_xlabel("Sieve Size (mm, log scale)")
-        ax.set_ylabel("% Passing")
-        ax.set_title("Particle Size Distribution Curve")
-        ax.invert_xaxis()
-        ax.grid(True, which='both')
+    st.pyplot(fig)
 
-        st.pyplot(fig)
 
         # Basic classification (placeholder logic)
         if df["% Passing"].iloc[0] < 10:
