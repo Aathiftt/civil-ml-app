@@ -85,12 +85,11 @@ elif option == "Soil Classification":
 elif option == "Specific Gravity of Cement":
     st.header("Specific Gravity of Cement Calculator")
     st.markdown("All weights should be in **grams (g)**. Specific gravity is in **g/cc**.")
-    st.markdown("**Formula:** SG = (W2 - W1) / ((W2 - W1) - (W3 - W4)) × SG of Medium")
 
-    w1 = st.number_input("Weight of Empty Flask (W1)", value=135.0)
-    w2 = st.number_input("Weight of Flask + Cement (W2)", value=185.0)
-    w3 = st.number_input("Weight of Flask + Cement + Medium (W3)", value=390.0)
-    w4 = st.number_input("Weight of Flask + Medium (W4)", value=348.0)
+    w1 = st.number_input("Weight of Empty Flask (W1)", value=0)
+    w2 = st.number_input("Weight of Flask + Cement (W2)", value=0)
+    w3 = st.number_input("Weight of Flask + Cement + Medium (W3)", value=0)
+    w4 = st.number_input("Weight of Flask + Medium (W4)", value=0)
 
     medium = st.selectbox("Select Medium", ["Kerosene", "Diesel"])
     sg_medium = 0.79 if medium == "Kerosene" else 0.83
