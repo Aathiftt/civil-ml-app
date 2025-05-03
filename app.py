@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import LabelEncoder
+import pandas as pd  # Ensure pandas is imported
 
 st.title("Civil Engineering ML Toolkit")
 
@@ -30,17 +31,21 @@ if option == "Concrete Strength Predictor":
 elif option == "Soil Classification":
     st.header("Soil Classification Based on Index Properties")
 
-    # Example dataset
+    # Example dataset for soil classification
     soil_data = {
         "Liquid Limit": [30, 60, 45, 40, 50, 35],
         "Plastic Limit": [20, 25, 30, 28, 33, 24],
         "Soil Type": ["CL", "CH", "CL", "CL", "CH", "CL"]
     }
 
+    # Ensure soil_data is correctly converted to a DataFrame
     df = pd.DataFrame(soil_data)
+
+    # Define features and target
     X = df[["Liquid Limit", "Plastic Limit"]]
     y = df["Soil Type"]
 
+    # Encoding labels for classification
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
