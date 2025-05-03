@@ -10,29 +10,39 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
-
-st.title("🧱 Civil Engineering Lab Assistant")  # Removed layout argument
+st.title("🧱 Civil Engineering Lab Assistant")
 st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
-st.markdown("""
-This web application is designed to assist students, educators, and professionals in performing common civil engineering lab computations and visualizations with ease.
+option = st.sidebar.selectbox(
+    "Choose a module",
+    (
+        "Home",
+        "Concrete Strength Calculator",
+        "Soil Properties",
+        "Consistency Limits",
+        "Sieve Analysis"
+    )
+)
 
-### 💡 Features:
-- Predict **Concrete Strength** using CTM data (Machine Learning)
-- Analyze **Soil Properties** from index limits
-- Calculate **Consistency Limits** for classification
-- Perform **Sieve Analysis** and plot **Particle Size Distribution**
-- Get instant insights and basic soil classification
+if option == "Home":
+    st.markdown("""
+    This web application is designed to assist students, educators, and professionals in performing common civil engineering lab computations and visualizations with ease.
 
-### 🔍 How to Use:
-1. Select a module from the left sidebar.
-2. Enter your data in the provided fields.
-3. View results instantly with charts or classifications.
-4. Use sample values (if unsure) to try out the modules.
+    ### 💡 Features:
+    - Predict **Concrete Strength** using CTM data (Machine Learning)
+    - Analyze **Soil Properties** from index limits
+    - Calculate **Consistency Limits** for classification
+    - Perform **Sieve Analysis** and plot **Particle Size Distribution**
+    - Get instant insights and basic soil classification
 
-👉 Explore each section using the sidebar. Happy Testing!  
-""")
+    ### 🔍 How to Use:
+    1. Select a module from the left sidebar.
+    2. Enter your data in the provided fields.
+    3. View results instantly with charts or classifications.
+    4. Use sample values (if unsure) to try out the modules.
 
+    👉 Explore each section using the sidebar. Happy Testing!  
+    """)
 
 # ---------------- Concrete Strength Calculator ----------------
 if option == "Concrete Strength Calculator":
