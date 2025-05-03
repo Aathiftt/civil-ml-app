@@ -145,6 +145,100 @@ elif option == "Area Converter":
         area_cent = area_m2 / 40.47
         area_ft2 = area_m2 * 10.7639
 
+# ---------------- Consistency Limit ----------------
+st.markdown("---")
+st.header("Consistency Limit Calculation")
+
+consistency_option = st.selectbox("Select the type of limit to calculate:", ["Liquid Limit", "Plastic Limit", "Shrinkage Limit"])
+
+if consistency_option == "Liquid Limit":
+    st.subheader("Liquid Limit - Casagrande Method")
+    st.markdown("**Description:** The Casagrande method determines the moisture content at which soil changes from plastic to liquid state. It involves placing soil in a Casagrande cup and recording the number of blows required to close a groove.")
+
+    st.markdown("### Sample 1")
+    m1_1 = st.number_input("Sample 1 - Mass of container (g)", key="ll_m1_1")
+    m2_1 = st.number_input("Sample 1 - Mass of container + wet soil (g)", key="ll_m2_1")
+    m3_1 = st.number_input("Sample 1 - Mass of container + dry soil (g)", key="ll_m3_1")
+    n1 = st.number_input("Sample 1 - Number of blows", key="ll_n1")
+
+    st.markdown("### Sample 2")
+    m1_2 = st.number_input("Sample 2 - Mass of container (g)", key="ll_m1_2")
+    m2_2 = st.number_input("Sample 2 - Mass of container + wet soil (g)", key="ll_m2_2")
+    m3_2 = st.number_input("Sample 2 - Mass of container + dry soil (g)", key="ll_m3_2")
+    n2 = st.number_input("Sample 2 - Number of blows", key="ll_n2")
+
+    if st.button("Calculate Liquid Limit"):
+        try:
+            w1 = ((m2_1 - m3_1) / (m3_1 - m1_1)) * 100
+            w2 = ((m2_2 - m3_2) / (m3_2 - m1_2)) * 100
+            flow_index = (w1 - w2) / math.log10(n2 / n1)
+            st.success(f"Water Content of Sample 1: {w1:.2f}%")
+            st.success(f"Water Content of Sample 2: {w2:.2f}%")
+            st.success(f"Flow Index (FI): {flow_index:.2f}")
+        except:
+            st.error("Check that none of the denominators are zero and all values are entered correctly.")
+
+if consistency_option == "Plastic Limit":
+    st.subheader("Plastic Limit")
+    st.markdown("**Description:** The plastic limit is the moisture content at which soil can be rolled into threads without crumbling.")
+
+    m1 = st.number_input("Mass of container (g)", key="pl_m1")
+    m2 = st.number_input("Mass of container + wet soil (g)", key="pl_m2")
+    m3 = st.number_input("Mass of container + dry soil (g)", key="pl_m3")
+
+    if st.button("Calculate Plastic Limit"):
+        try:
+            pl = ((m2 - m3) / (m3 - m1)) * 100
+            st.success(f"Plastic Limit (PL): {pl:.2f}%")
+        except:
+            st.error("Invalid input or division by zero.")
+
+if consistency_option == "Shrinkage Limit":
+    st.subheader("Shrinkage Limit")
+    st.markdown("**Description:** The shrinkage limit is the moisture content below which further loss of moisture does not result in volume reduction.")
+
+    m1 = st.number_input("Mass of shrinkage dish (g)", key="sl_m1")
+    m2 = st.number_input("Mass of dish + wet soil (g)", key="sl_m2")
+    m3 = st.number_input("Mass of dish + dry soil (g)", key="sl_m3")
+    m4 = st.number_input("Mass of displaced mercury (g)", key="sl_m4")
+    m5 = st.number_input("Mass of dish filled with mercury (g)", key="sl_m5")
+
+    if st.button("Calculate Shrinkage Limit"):
+        try:
+            mass_water = m2 - m3
+            volume_dry = m5 - m4
+            sl = ((mass_water - (m3 - m1)) / volume_dry) * 100
+            st.success(f"Shrinkage Limit (SL): {sl:.2f}%")
+        except:
+            st.error("Check the inputs. Ensure no division by zero or missing values.")
+
+# ---------------- Final Soil Indices ----------------
+st.markdown("---")
+st.subheader("Additional Soil Indices")
+
+ll = st.number_input("Enter Liquid Limit (LL) %", key="final_ll")
+pl = st.number_input("Enter Plastic Limit (PL) %", key="final_pl")
+sl = st.number_input("Enter Shrinkage Limit (SL) %", key="final_sl")
+fi = st.number_input("Enter Flow Index (FI)", key="final_fi")
+w_nat = st.number_input("Enter Natural Water Content (%)", key="natural_wc")
+
+if st.button("Calculate Indices"):
+    try:
+        pi = ll - pl
+        li = (w_nat - pl) / pi if pi != 0 else 0
+        ti = pi / fi if fi != 0 else 0
+        ci = (ll - w_nat) / pi if pi != 0 else 0
+        si = pi - sl
+
+        st.success(f"Plasticity Index (PI): {pi:.2f}%")
+        st.success(f"Liquidity Index (LI): {li:.2f}")
+        st.success(f"Toughness Index (TI): {ti:.2f}")
+        st.success(f"Consistency Index (CI): {ci:.2f}")
+        st.success(f"Shrinkage Index (SI): {si:.2f}%")
+    except Exception as e:
+        st.error(f"Error in calculation: {e}")
+
+
         st.success(f"Area = {area_m2:.2f} m²")
         st.info(f"In Cents: {area_cent:.2f} cents")
         st.info(f"In Square Feet: {area_ft2:.2f} ft²")
