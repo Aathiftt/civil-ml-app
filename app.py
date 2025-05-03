@@ -1,6 +1,5 @@
 import streamlit as st
 import math
-import pandas as pd
 
 st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
 st.title("Civil Engineering Calculator")
@@ -42,6 +41,8 @@ elif option == "Soil Classification":
     st.header("Soil Classification Tools")
 
     consistency_option = st.selectbox("Choose Consistency Limit Type", ["None", "Liquid Limit", "Plastic Limit", "Shrinkage Limit"])
+
+    liquid_limit = plastic_limit = shrinkage_limit = None
 
     if consistency_option == "Liquid Limit":
         st.subheader("Liquid Limit - Casagrande Method")
@@ -108,6 +109,34 @@ elif option == "Soil Classification":
                 st.success(f"Shrinkage Limit = {shrinkage_limit:.2f}%")
             except:
                 st.error("Invalid input values.")
+
+    # Calculate the other indices
+    if liquid_limit is not None and plastic_limit is not None and shrinkage_limit is not None:
+        if st.button("Calculate Other Indices"):
+            try:
+                # Plasticity Index (PI)
+                pi = liquid_limit - plastic_limit
+
+                # Flow Index (FI) - Using a sample 1 and sample 2 data
+                fi = (w1 - w2) / math.log10(n2 / n1)
+
+                # Toughness Index (TI)
+                ti = pi / fi if fi != 0 else 0
+
+                # Consistency Index (CI) - Assuming a sample water content 'w' is provided
+                w = st.number_input("Enter Natural Water Content (%)", min_value=0.0)
+                ci = (liquid_limit - w) / pi if pi != 0 else 0
+
+                # Shrinkage Index (SI)
+                si = liquid_limit - shrinkage_limit
+
+                st.success(f"Plasticity Index (PI) = {pi:.2f}")
+                st.success(f"Flow Index (FI) = {fi:.2f}")
+                st.success(f"Toughness Index (TI) = {ti:.2f}")
+                st.success(f"Consistency Index (CI) = {ci:.2f}")
+                st.success(f"Shrinkage Index (SI) = {si:.2f}")
+            except Exception as e:
+                st.error(f"Error calculating indices: {str(e)}")
 
 # ---------------- Specific Gravity of Cement ----------------
 elif option == "Specific Gravity of Cement":
