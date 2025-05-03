@@ -42,6 +42,7 @@ if option == "Home":
     2. Enter your data in the provided fields.
     3. View results instantly with charts or classifications.
     4. Use sample values (if unsure) to try out the modules.
+    5. Print the Result using the **Print** Option at top right : Icon
 
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
