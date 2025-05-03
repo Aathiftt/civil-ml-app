@@ -1,5 +1,13 @@
 import streamlit as st
 import math
+import pandas as pd
+import numpy as np
+import streamlit as st
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
 st.title("Civil Engineering Calculator")
