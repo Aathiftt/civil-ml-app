@@ -8,16 +8,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-import openai
 
-openai.api_key = st.secrets["openai_api_key"]  # Correct usage
-
-# Page config
-st.set_page_config(page_title="Civil Engineering Lab Assistant", layout="wide")
+st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
 st.title("🧱 Civil Engineering Lab Assistant")
 st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
-# Sidebar option
 option = st.sidebar.selectbox(
     "Choose a module",
     (
@@ -25,76 +20,31 @@ option = st.sidebar.selectbox(
         "Concrete Strength Calculator",
         "Soil Classification",
         "Specific Gravity of Cement",
-        "Sieve Analysis",
-        "Area Converter"
+        "Sieve Analysis","Area Converter"
     )
 )
 
-# Function to get OpenAI response
-def query_chatgpt(prompt):
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # or gpt-4
-            messages=[
-                {"role": "system", "content": "You are a helpful civil engineering assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=50,
-            temperature=0.7
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        return f"Error: {str(e)}"
-
-# Floating chatbot UI
 if option == "Home":
     st.markdown("""
+    This web application is designed to assist students, educators, and professionals in performing common civil engineering lab computations and visualizations with ease.
+
     ### 💡 Features:
-    - Predict **Concrete Strength**
-    - Analyze **Soil Properties**
-    - Perform **Sieve Analysis**
-    - Area Converter and more.
+    - Predict **Concrete Strength** using CTM data (Machine Learning)
+    - Analyze **Soil Properties** from index limits
+    - Calculate **Consistency Limits** for classification
+    - Calculate **Specific Gravity** of cement using Le Chatlier Apparatus
+    - Perform **Sieve Analysis** and plot **Particle Size Distribution**
+    - Calculate and Convert Area of a plot
+    - Get instant insights and basic soil classification
+
+    ### 🔍 How to Use:
+    1. Select a module from the left sidebar.
+    2. Enter your data in the provided fields.
+    3. View results instantly with charts or classifications.
+    4. Use sample values (if unsure) to try out the modules.
+
+    👉 Explore each section using the sidebar. Happy Testing!  
     """)
-
-    # Custom CSS for floating chatbot
-    st.markdown("""
-    <style>
-    .floating-chat {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 340px;
-        padding: 15px;
-        background-color: #1e1e1e;
-        color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        z-index: 9999;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    with st.container():
-        st.markdown('<div class="floating-chat">', unsafe_allow_html=True)
-        st.markdown("**💬 Ask the AI Civil Assistant**")
-
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
-
-        for chat in st.session_state.chat_history:
-            st.markdown(f"**You:** {chat['user']}")
-            st.markdown(f"**Bot:** {chat['bot']}")
-
-        user_input = st.text_input("Type your question here:", key="user_chat_input")
-
-        if user_input:
-            response = query_chatgpt(user_input)
-            st.session_state.chat_history.append({"user": user_input, "bot": response})
-            st.experimental_rerun()
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
 
 # ---------------- Concrete Strength Calculator ----------------
 if option == "Concrete Strength Calculator":
@@ -357,4 +307,3 @@ elif option == "Sieve Analysis":
                 st.info("Soil appears to be well graded.")
         except Exception as e:
             st.warning("Not enough data to calculate D10, D30, D60. Ensure data covers relevant passing percentages.")
-
