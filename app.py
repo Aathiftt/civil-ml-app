@@ -169,14 +169,26 @@ if consistency_option == "Liquid Limit":
 
     if st.button("Calculate Liquid Limit"):
         try:
+            # Sample 1 Water Content
             w1 = ((m2_1 - m3_1) / (m3_1 - m1_1)) * 100
+            # Sample 2 Water Content
             w2 = ((m2_2 - m3_2) / (m3_2 - m1_2)) * 100
-            flow_index = (w1 - w2) / math.log10(n2 / n1)
-            st.success(f"Water Content of Sample 1: {w1:.2f}%")
-            st.success(f"Water Content of Sample 2: {w2:.2f}%")
-            st.success(f"Flow Index (FI): {flow_index:.2f}")
+
+            if n1 > 0 and n2 > 0 and n1 != n2:
+                flow_index = (w1 - w2) / np.log10(n1 / n2)
+                liquid_limit = (w1 + w2) / 2  # Approximate average
+
+                st.success(f"Sample 1 Water Content: {w1:.2f}%")
+                st.success(f"Sample 2 Water Content: {w2:.2f}%")
+                st.success(f"Flow Index (FI): {flow_index:.2f}")
+                st.success(f"Liquid Limit (LL): {liquid_limit:.2f}%")
+            else:
+                st.error("Number of blows must be > 0 and not equal to each other for both samples.")
+        except ZeroDivisionError:
+            st.error("Invalid input: Check that container masses are correct and do not cause division by zero.")
         except:
-            st.error("Check that none of the denominators are zero and all values are entered correctly.")
+            st.error("An unexpected error occurred. Please check all inputs.")
+
 
 if consistency_option == "Plastic Limit":
     st.subheader("Plastic Limit")
