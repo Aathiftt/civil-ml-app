@@ -110,28 +110,29 @@ elif option == "Soil Classification":
             except:
                 st.error("Invalid input values.")
 
-    # Calculate the other indices
-st.subheader("Calculate Other Indices")
-st.markdown("Please input the values for Liquid Limit (LL), Plastic Limit (PL), Shrinkage Limit (SL), and Natural Water Content (WC) to calculate the indices:")
+    # ---------------- Additional Indices ----------------
+    st.subheader("Calculate Other Indices")
+    st.markdown("Please input the values for Liquid Limit (LL), Plastic Limit (PL), Shrinkage Limit (SL), and Natural Water Content (WC) to calculate the indices:")
 
-LL = st.number_input("Enter Liquid Limit (LL) (%)", min_value=0.0)
-PL = st.number_input("Enter Plastic Limit (PL) (%)", min_value=0.0)
-SL = st.number_input("Enter Shrinkage Limit (SL) (%)", min_value=0.0)
-WC = st.number_input("Enter Natural Water Content (WC) (%)", min_value=0.0)
+    LL = st.number_input("Enter Liquid Limit (LL) (%)", min_value=0.0)
+    PL = st.number_input("Enter Plastic Limit (PL) (%)", min_value=0.0)
+    SL = st.number_input("Enter Shrinkage Limit (SL) (%)", min_value=0.0)
+    WC = st.number_input("Enter Natural Water Content (WC) (%)", min_value=0.0)
 
-if st.button("Calculate Indices"):
-    if LL <= PL:
-        st.error("Liquid Limit must be greater than Plastic Limit.")
-    else:
-        PI = LL - PL
-        LI = (WC - PL) / PI if PI != 0 else 0
-        CI = (LL - WC) / PI if PI != 0 else 0
-        SI = LL - SL
+    if st.button("Calculate Indices"):
+        if LL <= PL:
+            st.error("Liquid Limit must be greater than Plastic Limit.")
+        else:
+            PI = LL - PL
+            LI = (WC - PL) / PI if PI != 0 else 0
+            CI = (LL - WC) / PI if PI != 0 else 0
+            SI = LL - SL
 
-        st.success(f"Plasticity Index (PI) = {PI:.2f}")
-        st.success(f"Liquidity Index (LI) = {LI:.2f}")
-        st.success(f"Consistency Index (CI) = {CI:.2f}")
-        st.success(f"Shrinkage Index (SI) = {SI:.2f}")
+            st.success(f"Plasticity Index (PI) = {PI:.2f}")
+            st.success(f"Liquidity Index (LI) = {LI:.2f}")
+            st.success(f"Consistency Index (CI) = {CI:.2f}")
+            st.success(f"Shrinkage Index (SI) = {SI:.2f}")
+
 # ---------------- Specific Gravity of Cement ----------------
 elif option == "Specific Gravity of Cement":
     st.header("Specific Gravity of Cement")
