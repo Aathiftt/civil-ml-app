@@ -25,8 +25,6 @@ option = st.sidebar.selectbox("Select Tool", [
 # ---------------- Concrete Strength Calculator ----------------
 if option == "Concrete Strength Calculator":
     st.header("Concrete Strength from CTM Reading")
-    st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
-
     shape = st.selectbox("Select Shape of Specimen", ["Rectangle", "Circle", "Triangle"])
 
     if shape == "Rectangle":
