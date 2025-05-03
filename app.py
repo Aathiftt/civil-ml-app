@@ -27,13 +27,32 @@ if option == "Concrete Strength Calculator":
     st.header("Concrete Strength from CTM Reading")
     st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
 
-    area = st.number_input("Enter Area (mm²)", value=0)
-    ctm = st.number_input("Enter CTM Reading (Tonnes)", value=0)
+    shape = st.selectbox("Select Shape of Specimen", ["Rectangle", "Circle", "Triangle"])
+
+    if shape == "Rectangle":
+        length = st.number_input("Enter Length (mm)", min_value=0.0, step=1.0)
+        breadth = st.number_input("Enter Breadth (mm)", min_value=0.0, step=1.0)
+        area = length * breadth
+
+    elif shape == "Circle":
+        radius = st.number_input("Enter Radius (mm)", min_value=0.0, step=1.0)
+        area = 3.1416 * radius * radius
+
+    elif shape == "Triangle":
+        base = st.number_input("Enter Base (mm)", min_value=0.0, step=1.0)
+        height = st.number_input("Enter Height (mm)", min_value=0.0, step=1.0)
+        area = 0.5 * base * height
+
+    ctm = st.number_input("Enter CTM Reading (Tonnes)", min_value=0.0, step=0.1)
 
     if st.button("Calculate Strength"):
-        force_n = ctm * 1000 * 9.81  # Convert ton to N
-        strength = force_n / area  # MPa = N/mm²
-        st.success(f"Compressive Strength = {strength:.2f} MPa")
+        if area == 0:
+            st.error("Area cannot be zero. Please enter valid dimensions.")
+        else:
+            force_n = ctm * 1000 * 9.81  # Convert ton to Newton
+            strength = force_n / area  # MPa = N/mm²
+            st.success(f"Area = {area:.2f} mm²")
+            st.success(f"Compressive Strength = {strength:.2f} MPa")
 
 # ---------------- Soil Classification ----------------
 elif option == "Soil Classification":
