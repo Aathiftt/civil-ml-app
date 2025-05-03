@@ -20,7 +20,7 @@ option = st.sidebar.selectbox(
         "Concrete Strength Calculator",
         "Soil Classification",
         "Specific Gravity of Cement",
-        "Sieve Analysis"
+        "Sieve Analysis","Area Converter"
     )
 )
 
@@ -34,6 +34,7 @@ if option == "Home":
     - Calculate **Consistency Limits** for classification
     - Calculate **Specific Gravity** of cement using Le Chatlier Apparatus
     - Perform **Sieve Analysis** and plot **Particle Size Distribution**
+    - Calculate and Convert Area of a plot
     - Get instant insights and basic soil classification
 
     ### 🔍 How to Use:
@@ -48,7 +49,6 @@ if option == "Home":
 # ---------------- Concrete Strength Calculator ----------------
 if option == "Concrete Strength Calculator":
     st.header("Concrete Strength from CTM Reading")
-    st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
 
     shape = st.selectbox("Choose Shape of Specimen", ["Rectangle", "Circle"])
 
