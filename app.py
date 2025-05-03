@@ -197,7 +197,7 @@ elif option == "Sieve Analysis":
 
     st.subheader("Enter sieve details")
 
-    standard_sieves = ['4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
+    standard_sieves = ['63mm','50mm','40mm','37.5mm','31.5','25mm','20mm','12.5mm','10mm','6.3mm','4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
     sieve_sizes = []
     retained_percents = []
 
