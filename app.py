@@ -208,43 +208,77 @@ elif option == "Sieve Analysis":
         with col2:
             retained = st.number_input(f"% Retained on {sieve}", min_value=0.0, max_value=100.0, value=0.0, key=f"ret_{i}")
 
-        sieve_sizes.append(float(sieve.split()[0]))
+        # Convert to mm
+        sieve_val = float(sieve.replace("mm", "").replace("µm", "").strip())
+        if "µm" in sieve:
+            sieve_val /= 1000  # Convert microns to mm
+        sieve_sizes.append(sieve_val)
         retained_percents.append(retained)
-if st.button("Analyze"):
-    df = pd.DataFrame({
-        "Sieve Size (mm)": sieve_sizes,
-        "% Retained": retained_percents
-    })
 
-    df.sort_values("Sieve Size (mm)", ascending=False, inplace=True)  # Ensure descending order
+    if st.button("Analyze"):
+        import matplotlib.pyplot as plt
+        import numpy as np
+        from scipy.interpolate import interp1d
+        import pandas as pd
 
-    df["Cumulative Retained"] = df["% Retained"].cumsum()
-    df["% Passing"] = 100 - df["Cumulative Retained"]
+        df = pd.DataFrame({
+            "Sieve Size (mm)": sieve_sizes,
+            "% Retained": retained_percents
+        })
 
-    st.subheader("Sieve Analysis Table")
-    st.dataframe(df)
+        df.sort_values("Sieve Size (mm)", ascending=False, inplace=True)
 
-    # Plot
-    fig, ax = plt.subplots()
-    ax.plot(df["Sieve Size (mm)"], df["% Passing"], marker='o', linestyle='-')
-    ax.set_xscale('log')
-    ax.invert_xaxis()  # Reverse the X-axis after setting log scale
-    ax.set_xlabel("Sieve Size (mm, log scale)")
-    ax.set_ylabel("% Passing")
-    ax.set_title("Particle Size Distribution Curve")
-    ax.grid(True, which='both')
+        df["Cumulative Retained"] = df["% Retained"].cumsum()
+        df["% Passing"] = 100 - df["Cumulative Retained"]
 
-    st.pyplot(fig)
+        st.subheader("Sieve Analysis Table")
+        st.dataframe(df)
 
-# Corrected classification based on % passing 4.75 mm sieve
-sieve_4_75_index = df[df["Sieve Size (mm)"] == 4.75].index
+        # Plot
+        fig, ax = plt.subplots()
+        ax.plot(df["Sieve Size (mm)"], df["% Passing"], marker='o', linestyle='-')
+        ax.set_xscale('log')
+        ax.invert_xaxis()
+        ax.set_xlabel("Sieve Size (mm, log scale)")
+        ax.set_ylabel("% Passing")
+        ax.set_title("Particle Size Distribution Curve")
+        ax.grid(True, which='both')
 
-if not sieve_4_75_index.empty:
-    percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
-    
-    if percent_passing_4_75 > 50:
-        st.info("Soil appears to be fine-grained (more than 50% passing through 4.75 mm sieve).")
-    else:
-        st.info("Soil appears to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
-else:
-    st.warning("4.75 mm sieve not included in input. Cannot determine basic soil type.")
+        st.pyplot(fig)
+
+        # Basic soil type classification based on 4.75 mm
+        sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
+        if not sieve_4_75_index.empty:
+            percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
+
+            if percent_passing_4_75 > 50:
+                st.info("Soil appears to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+            else:
+                st.info("Soil appears to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
+        else:
+            st.warning("4.75 mm sieve not included in input. Cannot determine basic soil type.")
+
+        # Gradation parameters: D10, D30, D60
+        try:
+            interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
+            D10 = float(interp_func(10))
+            D30 = float(interp_func(30))
+            D60 = float(interp_func(60))
+
+            Cu = round(D60 / D10, 2)
+            Cc = round((D30**2) / (D10 * D60), 2)
+
+            st.subheader("Soil Gradation Parameters")
+            st.markdown(f"- D10 (Effective Size): **{D10:.2f} mm**")
+            st.markdown(f"- D30: **{D30:.2f} mm**")
+            st.markdown(f"- D60: **{D60:.2f} mm**")
+            st.markdown(f"- Uniformity Coefficient (Cu): **{Cu}**")
+            st.markdown(f"- Coefficient of Curvature (Cc): **{Cc}**")
+
+            if Cu < 4 or Cc < 1 or Cc > 3:
+                st.info("Soil appears to be poorly graded.")
+            else:
+                st.info("Soil appears to be well graded.")
+        except Exception as e:
+            st.warning("Not enough data to calculate D10, D30, D60. Ensure data covers relevant passing percentages.")
+
