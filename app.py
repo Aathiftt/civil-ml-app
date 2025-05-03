@@ -102,3 +102,32 @@ elif option == "Specific Gravity of Cement":
             st.success(f"Specific Gravity = {specific_gravity:.2f} g/cc")
         except ZeroDivisionError:
             st.error("Invalid inputs: Division by zero.")
+# ---------------- Area Converter ----------------
+elif option == "Area Converter":
+    st.header("Area Calculator & Converter")
+    st.markdown("Calculate area in square meters and convert it to **cents** and **square feet**.")
+
+    shape = st.selectbox("Select Shape", ["Rectangle", "Triangle", "Circle"])
+
+    if shape == "Rectangle":
+        length = st.number_input("Enter Length (m)", min_value=0.0)
+        width = st.number_input("Enter Width (m)", min_value=0.0)
+        area_m2 = length * width
+
+    elif shape == "Triangle":
+        base = st.number_input("Enter Base (m)", min_value=0.0)
+        height = st.number_input("Enter Height (m)", min_value=0.0)
+        area_m2 = 0.5 * base * height
+
+    elif shape == "Circle":
+        radius = st.number_input("Enter Radius (m)", min_value=0.0)
+        area_m2 = 3.1416 * radius ** 2
+
+    if st.button("Calculate Area"):
+        area_cent = area_m2 / 40.47
+        area_ft2 = area_m2 * 10.7639
+
+        st.success(f"Area = {area_m2:.2f} m²")
+        st.info(f"In Cents: {area_cent:.2f} cents")
+        st.info(f"In Square Feet: {area_ft2:.2f} ft²")
+
