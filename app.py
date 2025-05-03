@@ -27,8 +27,8 @@ if option == "Concrete Strength Calculator":
     st.header("Concrete Strength from CTM Reading")
     st.markdown("**Formula:** Strength (MPa) = (CTM Reading in Tons × 1000 × 9.81) / Area in mm²")
 
-    area = st.number_input("Enter Area (mm²)", value=1500.0)
-    ctm = st.number_input("Enter CTM Reading (Tonnes)", value=10.0)
+    area = st.number_input("Enter Area (mm²)", value=0)
+    ctm = st.number_input("Enter CTM Reading (Tonnes)", value=0)
 
     if st.button("Calculate Strength"):
         force_n = ctm * 1000 * 9.81  # Convert ton to N
