@@ -391,7 +391,7 @@ elif option == "Sieve Analysis":
                 st.markdown(f"- D60: **{D60:.2f} mm**")
 
                 st.subheader("Uniformity and Curvature Coefficients")
-                st.markdown(f"- Uniformity Coefficient (Cu = D60/D10): **{Cu}**")
-                st.markdown(f"- Coefficient of Curvature (Cc = (D30²)/(D10×D60)): **{Cc}**")
+                st.markdown(f"- Uniformity Coefficient : **{Cu}**")
+                st.markdown(f"- Coefficient of Curvature : **{Cc}**")
             except Exception as e:
                 st.warning("Not enough data to calculate D10, D30, D60 for aggregates.")
