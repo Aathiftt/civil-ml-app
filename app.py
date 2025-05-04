@@ -346,48 +346,57 @@ elif option == "Sieve Analysis":
 
         # For Aggregates: Calculate Uniformity Coefficient, Fineness Modulus, and Zone
         elif material_type == "Aggregates":
-            # Uniformity Coefficient (Cu) and Fineness Modulus (FM) Calculation
-            sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
-            if not sieve_4_75_index.empty:
-                percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
-                if percent_passing_4_75 > 50:
-                    st.info("Aggregates appear to be fine-grained (more than 50% passing through 4.75 mm sieve).")
-                else:
-                    st.info("Aggregates appear to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
-            else:
-                st.warning("4.75 mm sieve not included in input. Cannot determine basic material type.")
+    # Uniformity Coefficient (Cu) and Fineness Modulus (FM) Calculation
+    sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
+    if not sieve_4_75_index.empty:
+        percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
+        if percent_passing_4_75 > 50:
+            st.info("Aggregates appear to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+        else:
+            st.info("Aggregates appear to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
+    else:
+        st.warning("4.75 mm sieve not included in input. Cannot determine basic material type.")
 
-            # Fineness Modulus (FM): Sum of cumulative percentage passing through different sieves
-            try:
-                fm = df["% Passing"].sum() / 100
-                st.subheader("Fineness Modulus Calculation")
-                st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
+    # Fineness Modulus (FM): Sum of cumulative percentage passing through standard sieves
+    try:
+        fm = df["% Passing"].sum() / 100
+        st.subheader("Fineness Modulus Calculation")
+        st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
 
-                # Determining Zone of Aggregates
-                if fm < 2.5:
-                    zone = "Zone I"
-                elif fm >= 2.5 and fm <= 3.0:
-                    zone = "Zone II"
-                elif fm > 3.0 and fm <= 3.5:
-                    zone = "Zone III"
-                else:
-                    zone = "Zone IV"
+        # Determining Zone of Aggregates
+        if fm < 2.5:
+            zone = "Zone I"
+        elif fm >= 2.5 and fm <= 3.0:
+            zone = "Zone II"
+        elif fm > 3.0 and fm <= 3.5:
+            zone = "Zone III"
+        else:
+            zone = "Zone IV"
 
-                st.markdown(f"- Aggregate Zone: **{zone}**")
+        st.markdown(f"- Aggregate Zone: **{zone}**")
 
-            except Exception as e:
-                st.warning("Not enough data to calculate Fineness Modulus (FM). Ensure data covers relevant passing percentages.")
+    except Exception as e:
+        st.warning("Not enough data to calculate Fineness Modulus (FM). Ensure data covers relevant passing percentages.")
 
-            # Uniformity Coefficient (Cu): D60/D10
-            try:
-                interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
-                D10 = float(interp_func(10))
-                D60 = float(interp_func(60))
+    # D10, D30, D60, Cu and Cc
+    try:
+        interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
+        D10 = float(interp_func(10))
+        D30 = float(interp_func(30))
+        D60 = float(interp_func(60))
 
-                Cu = round(D60 / D10, 2)
+        Cu = round(D60 / D10, 2)
+        Cc = round((D30 ** 2) / (D10 * D60), 2)
 
-                st.subheader("Uniformity Coefficient")
-                st.markdown(f"- Uniformity Coefficient (Cu): **{Cu}**")
+        st.subheader("Grain Size Parameters")
+        st.markdown(f"- D10 (effective size): **{D10:.2f} mm**")
+        st.markdown(f"- D30: **{D30:.2f} mm**")
+        st.markdown(f"- D60: **{D60:.2f} mm**")
 
-            except Exception as e:
-                st.warning("Not enough data to calculate Uniformity Coefficient (Cu). Ensure data covers relevant passing percentages.")
+        st.subheader("Uniformity and Curvature Coefficients")
+        st.markdown(f"- Uniformity Coefficient (Cu = D60/D10): **{Cu}**")
+        st.markdown(f"- Coefficient of Curvature (Cc = (D30²)/(D10×D60)): **{Cc}**")
+
+    except Exception as e:
+        st.warning("Not enough data to calculate D10, D30, D60. Ensure the % Passing column includes values close to 10%, 30%, and 60%.")
+
