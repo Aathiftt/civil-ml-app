@@ -259,7 +259,8 @@ elif option == "Sieve Analysis":
 
     st.subheader("Enter sieve details")
 
-    standard_sieves = ['80mm','63mm','50mm','40mm','37.5mm','31.5','25mm','20mm','12.5mm','10mm','6.3mm','4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
+    standard_sieves = ['80mm', '63mm', '50mm', '40mm', '37.5mm', '31.5', '25mm', '20mm', '12.5mm', '10mm', '6.3mm',
+                       '4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
     sieve_sizes = []
     retained_percents = []
 
@@ -268,9 +269,9 @@ elif option == "Sieve Analysis":
         with col1:
             sieve = st.selectbox(f"Select sieve {i+1}", standard_sieves, key=f"sieve_{i}")
         with col2:
-            retained = st.number_input(f"% Retained on {sieve}", min_value=0.0, max_value=100.0, value=0.0, key=f"ret_{i}")
+            retained = st.number_input(f"% Retained on {sieve}", min_value=0.0, max_value=100.0, value=0.0,
+                                       key=f"ret_{i}")
 
-        # Convert to mm
         sieve_val = float(sieve.replace("mm", "").replace("µm", "").strip())
         if "µm" in sieve:
             sieve_val /= 1000  # Convert microns to mm
@@ -289,14 +290,13 @@ elif option == "Sieve Analysis":
         })
 
         df.sort_values("Sieve Size (mm)", ascending=False, inplace=True)
-
         df["Cumulative Retained"] = df["% Retained"].cumsum()
         df["% Passing"] = 100 - df["Cumulative Retained"]
 
         st.subheader("Sieve Analysis Table")
         st.dataframe(df)
 
-        # Plot
+        # Plotting PSD curve
         fig, ax = plt.subplots()
         ax.plot(df["Sieve Size (mm)"], df["% Passing"], marker='o', linestyle='-')
         ax.set_xscale('log')
@@ -305,11 +305,11 @@ elif option == "Sieve Analysis":
         ax.set_ylabel("% Passing")
         ax.set_title("Particle Size Distribution Curve")
         ax.grid(True, which='both')
-
         st.pyplot(fig)
 
-        # Soil or Aggregates: Soil type classification based on 4.75 mm sieve
+        # Analysis based on material type
         if material_type == "Soil":
+            # Classification as fine or coarse
             sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
             if not sieve_4_75_index.empty:
                 percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
@@ -320,15 +320,15 @@ elif option == "Sieve Analysis":
             else:
                 st.warning("4.75 mm sieve not included in input. Cannot determine basic soil type.")
 
-            # Gradation parameters: D10, D30, D60
+            # Gradation parameters
             try:
-                interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
+                interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1],
+                                       kind='linear', bounds_error=False, fill_value="extrapolate")
                 D10 = float(interp_func(10))
                 D30 = float(interp_func(30))
                 D60 = float(interp_func(60))
-
                 Cu = round(D60 / D10, 2)
-                Cc = round((D30**2) / (D10 * D60), 2)
+                Cc = round((D30 ** 2) / (D10 * D60), 2)
 
                 st.subheader("Soil Gradation Parameters")
                 st.markdown(f"- D10 (Effective Size): **{D10:.2f} mm**")
@@ -344,58 +344,54 @@ elif option == "Sieve Analysis":
             except Exception as e:
                 st.warning("Not enough data to calculate D10, D30, D60. Ensure data covers relevant passing percentages.")
 
-        # For Aggregates: Calculate Uniformity Coefficient, Fineness Modulus, and Zone
         elif material_type == "Aggregates":
-    # Uniformity Coefficient (Cu) and Fineness Modulus (FM) Calculation
+            # Classification as fine or coarse
             sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
             if not sieve_4_75_index.empty:
                 percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
                 if percent_passing_4_75 > 50:
                     st.info("Aggregates appear to be fine-grained (more than 50% passing through 4.75 mm sieve).")
                 else:
-            st.info("Aggregates appear to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
+                    st.info("Aggregates appear to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
             else:
                 st.warning("4.75 mm sieve not included in input. Cannot determine basic material type.")
 
-    # Fineness Modulus (FM): Sum of cumulative percentage passing through standard sieves
+            # Fineness Modulus (FM)
             try:
-            fm = df["% Passing"].sum() / 100
-            st.subheader("Fineness Modulus Calculation")
-            st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
+                fm = df["% Passing"].sum() / 100
+                st.subheader("Fineness Modulus Calculation")
+                st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
 
-        # Determining Zone of Aggregates
-            if fm < 2.5:
-                zone = "Zone I"
-            elif 2.5 <= fm <= 3.0:
-                zone = "Zone II"
-            elif 3.0 < fm <= 3.5:
-                zone = "Zone III"
-            else:
-                zone = "Zone IV"
-    
-            st.markdown(f"- Aggregate Zone: **{zone}**")
+                if fm < 2.5:
+                    zone = "Zone I"
+                elif 2.5 <= fm <= 3.0:
+                    zone = "Zone II"
+                elif 3.0 < fm <= 3.5:
+                    zone = "Zone III"
+                else:
+                    zone = "Zone IV"
 
-    except Exception as e:
-        st.warning("Not enough data to calculate Fineness Modulus (FM). Ensure data covers relevant passing percentages.")
+                st.markdown(f"- Aggregate Zone: **{zone}**")
+            except Exception as e:
+                st.warning("Not enough data to calculate Fineness Modulus (FM). Ensure data covers relevant sieves.")
 
-    # D10, D30, D60, Cu and Cc
-    try:
-        interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
-        D10 = float(interp_func(10))
-        D30 = float(interp_func(30))
-        D60 = float(interp_func(60))
+            # Gradation parameters for aggregates
+            try:
+                interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1],
+                                       kind='linear', bounds_error=False, fill_value="extrapolate")
+                D10 = float(interp_func(10))
+                D30 = float(interp_func(30))
+                D60 = float(interp_func(60))
+                Cu = round(D60 / D10, 2)
+                Cc = round((D30 ** 2) / (D10 * D60), 2)
 
-        Cu = round(D60 / D10, 2)
-        Cc = round((D30 ** 2) / (D10 * D60), 2)
+                st.subheader("Grain Size Parameters")
+                st.markdown(f"- D10 (Effective Size): **{D10:.2f} mm**")
+                st.markdown(f"- D30: **{D30:.2f} mm**")
+                st.markdown(f"- D60: **{D60:.2f} mm**")
 
-        st.subheader("Grain Size Parameters")
-        st.markdown(f"- D10 (effective size): **{D10:.2f} mm**")
-        st.markdown(f"- D30: **{D30:.2f} mm**")
-        st.markdown(f"- D60: **{D60:.2f} mm**")
-
-        st.subheader("Uniformity and Curvature Coefficients")
-        st.markdown(f"- Uniformity Coefficient (Cu = D60/D10): **{Cu}**")
-        st.markdown(f"- Coefficient of Curvature (Cc = (D30²)/(D10×D60)): **{Cc}**")
-
-    except Exception as e:
-        st.warning("Not enough data to calculate D10, D30, D60. Ensure the % Passing column includes values close to 10%, 30%, and 60%.")
+                st.subheader("Uniformity and Curvature Coefficients")
+                st.markdown(f"- Uniformity Coefficient (Cu = D60/D10): **{Cu}**")
+                st.markdown(f"- Coefficient of Curvature (Cc = (D30²)/(D10×D60)): **{Cc}**")
+            except Exception as e:
+                st.warning("Not enough data to calculate D10, D30, D60 for aggregates.")
