@@ -347,33 +347,33 @@ elif option == "Sieve Analysis":
         # For Aggregates: Calculate Uniformity Coefficient, Fineness Modulus, and Zone
         elif material_type == "Aggregates":
     # Uniformity Coefficient (Cu) and Fineness Modulus (FM) Calculation
-    sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
-    if not sieve_4_75_index.empty:
-        percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
-        if percent_passing_4_75 > 50:
-            st.info("Aggregates appear to be fine-grained (more than 50% passing through 4.75 mm sieve).")
-        else:
+            sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
+            if not sieve_4_75_index.empty:
+                percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
+                if percent_passing_4_75 > 50:
+                    st.info("Aggregates appear to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+                else:
             st.info("Aggregates appear to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
-    else:
-        st.warning("4.75 mm sieve not included in input. Cannot determine basic material type.")
+            else:
+                st.warning("4.75 mm sieve not included in input. Cannot determine basic material type.")
 
     # Fineness Modulus (FM): Sum of cumulative percentage passing through standard sieves
-    try:
-        fm = df["% Passing"].sum() / 100
-        st.subheader("Fineness Modulus Calculation")
-        st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
+            try:
+            fm = df["% Passing"].sum() / 100
+            st.subheader("Fineness Modulus Calculation")
+            st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
 
         # Determining Zone of Aggregates
-        if fm < 2.5:
-            zone = "Zone I"
-        elif fm >= 2.5 and fm <= 3.0:
-            zone = "Zone II"
-        elif fm > 3.0 and fm <= 3.5:
-            zone = "Zone III"
-        else:
-            zone = "Zone IV"
-
-        st.markdown(f"- Aggregate Zone: **{zone}**")
+            if fm < 2.5:
+                zone = "Zone I"
+            elif 2.5 <= fm <= 3.0:
+                zone = "Zone II"
+            elif 3.0 < fm <= 3.5:
+                zone = "Zone III"
+            else:
+                zone = "Zone IV"
+    
+            st.markdown(f"- Aggregate Zone: **{zone}**")
 
     except Exception as e:
         st.warning("Not enough data to calculate Fineness Modulus (FM). Ensure data covers relevant passing percentages.")
@@ -399,4 +399,3 @@ elif option == "Sieve Analysis":
 
     except Exception as e:
         st.warning("Not enough data to calculate D10, D30, D60. Ensure the % Passing column includes values close to 10%, 30%, and 60%.")
-
