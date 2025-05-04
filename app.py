@@ -18,7 +18,7 @@ option = st.sidebar.selectbox(
     (
         "Home",
         "Strength of Materials",
-        "Soil Classification",
+        "Soil Classification","Workability",
         "Specific Gravity of Cement",
         "Sieve Analysis","Area Converter"
     )
@@ -395,3 +395,67 @@ elif option == "Sieve Analysis":
                 st.markdown(f"- Coefficient of Curvature : **{Cc}**")
             except Exception as e:
                 st.warning("Not enough data to calculate D10, D30, D60 for aggregates.")
+
+#-------------------workability-------------------
+elif option == "Workability":
+    st.header("Workability of Concrete")
+
+    test_type = st.selectbox(
+        "Select Workability Test",
+        ["Slump Test", "Compaction Factor", "Flow Table", "Vee Bee"]
+    )
+
+    if test_type == "Slump Test":
+        slump_value = st.number_input("Enter Slump Value (mm)", min_value=0.0)
+        st.markdown(f"### Slump Value: **{slump_value:.1f} mm**")
+
+        if slump_value < 25:
+            st.success("Inference: The concrete shows **very low workability**, which is typically suitable for road construction or applications requiring very stiff mixes.")
+        elif 25 <= slump_value < 50:
+            st.success("Inference: The concrete has **low workability**, commonly used in mass concreting where vibration is employed.")
+        elif 50 <= slump_value < 100:
+            st.success("Inference: The concrete exhibits **medium workability**, appropriate for normal reinforced concrete placed with light compaction.")
+        elif 100 <= slump_value <= 175:
+            st.success("Inference: The concrete has **high workability**, suitable for sections with heavy reinforcement or complex formwork.")
+        else:
+            st.warning("Inference: The slump value entered is unusually high. Please check for input errors or very high fluidity mixes.")
+
+    elif test_type == "Compaction Factor":
+        cf_value = st.number_input("Enter Compaction Factor", min_value=0.0, max_value=1.0, step=0.01)
+        st.markdown(f"### Compaction Factor: **{cf_value:.2f}**")
+
+        if cf_value < 0.75:
+            st.success("Inference: The concrete has **very low workability** and would require intensive compaction. Suitable for dry mixes.")
+        elif 0.75 <= cf_value < 0.85:
+            st.success("Inference: The mix has **low workability** and is best used where mechanical vibration is provided during placing.")
+        elif 0.85 <= cf_value < 0.95:
+            st.success("Inference: The concrete has **medium workability**, generally workable with hand compaction.")
+        elif cf_value >= 0.95:
+            st.success("Inference: The concrete has **high workability**, ideal for heavily reinforced structures and areas with limited access.")
+
+    elif test_type == "Flow Table":
+        flow_percent = st.number_input("Enter Flow Value (%)", min_value=0.0, max_value=150.0, step=0.1)
+        st.markdown(f"### Flow Value: **{flow_percent:.1f}%**")
+
+        if flow_percent < 25:
+            st.success("Inference: The flow value indicates **very low workability**, suitable only where vibration is possible.")
+        elif 25 <= flow_percent < 50:
+            st.success("Inference: The mix has **low workability**, commonly used for precast sections with controlled compaction.")
+        elif 50 <= flow_percent < 100:
+            st.success("Inference: The concrete has **medium workability**, applicable for normal structural work.")
+        elif flow_percent >= 100:
+            st.success("Inference: The concrete shows **high workability**, beneficial in areas with congested reinforcement or complex molds.")
+
+    elif test_type == "Vee Bee":
+        vb_time = st.number_input("Enter Vee Bee Time (seconds)", min_value=0.0)
+        st.markdown(f"### Vee Bee Time: **{vb_time:.1f} seconds**")
+
+        if vb_time > 10:
+            st.success("Inference: The concrete has **very low workability**, typically seen in dry mixes used for pavements or roads.")
+        elif 5 <= vb_time <= 10:
+            st.success("Inference: The concrete has **low workability**, where mechanical vibration may be necessary for full compaction.")
+        elif 2 <= vb_time < 5:
+            st.success("Inference: The mix has **medium workability**, usable in reinforced concrete work with moderate reinforcement.")
+        elif vb_time < 2:
+            st.success("Inference: The concrete exhibits **high workability**, indicating a fluid mix that flows easily and requires little effort to compact.")
+
