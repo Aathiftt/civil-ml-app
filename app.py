@@ -253,11 +253,14 @@ elif option == "Area Converter":
 elif option == "Sieve Analysis":
     st.header("Sieve Analysis and PSD Chart")
 
+    # Select whether it's soil or aggregates
+    material_type = st.selectbox("Select Material Type", ["Soil", "Aggregates"])
+
     num_sieves = st.number_input("Enter number of sieves", min_value=2, max_value=10, value=5)
 
     st.subheader("Enter sieve details")
 
-    standard_sieves = ['63mm','50mm','40mm','37.5mm','31.5','25mm','20mm','12.5mm','10mm','6.3mm','4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
+    standard_sieves = ['80mm','63mm','50mm','40mm','37.5mm','31.5','25mm','20mm','12.5mm','10mm','6.3mm','4.75 mm', '2.36 mm', '1.18 mm', '600 µm', '300 µm', '150 µm', '75 µm']
     sieve_sizes = []
     retained_percents = []
 
@@ -306,38 +309,86 @@ elif option == "Sieve Analysis":
 
         st.pyplot(fig)
 
-        # Basic soil type classification based on 4.75 mm
-        sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
-        if not sieve_4_75_index.empty:
-            percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
-
-            if percent_passing_4_75 > 50:
-                st.info("Soil appears to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+        # Soil or Aggregates: Soil type classification based on 4.75 mm sieve
+        if material_type == "Soil":
+            sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
+            if not sieve_4_75_index.empty:
+                percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
+                if percent_passing_4_75 > 50:
+                    st.info("Soil appears to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+                else:
+                    st.info("Soil appears to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
             else:
-                st.info("Soil appears to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
-        else:
-            st.warning("4.75 mm sieve not included in input. Cannot determine basic soil type.")
+                st.warning("4.75 mm sieve not included in input. Cannot determine basic soil type.")
 
-        # Gradation parameters: D10, D30, D60
-        try:
-            interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
-            D10 = float(interp_func(10))
-            D30 = float(interp_func(30))
-            D60 = float(interp_func(60))
+            # Gradation parameters: D10, D30, D60
+            try:
+                interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
+                D10 = float(interp_func(10))
+                D30 = float(interp_func(30))
+                D60 = float(interp_func(60))
 
-            Cu = round(D60 / D10, 2)
-            Cc = round((D30**2) / (D10 * D60), 2)
+                Cu = round(D60 / D10, 2)
+                Cc = round((D30**2) / (D10 * D60), 2)
 
-            st.subheader("Soil Gradation Parameters")
-            st.markdown(f"- D10 (Effective Size): **{D10:.2f} mm**")
-            st.markdown(f"- D30: **{D30:.2f} mm**")
-            st.markdown(f"- D60: **{D60:.2f} mm**")
-            st.markdown(f"- Uniformity Coefficient (Cu): **{Cu}**")
-            st.markdown(f"- Coefficient of Curvature (Cc): **{Cc}**")
+                st.subheader("Soil Gradation Parameters")
+                st.markdown(f"- D10 (Effective Size): **{D10:.2f} mm**")
+                st.markdown(f"- D30: **{D30:.2f} mm**")
+                st.markdown(f"- D60: **{D60:.2f} mm**")
+                st.markdown(f"- Uniformity Coefficient (Cu): **{Cu}**")
+                st.markdown(f"- Coefficient of Curvature (Cc): **{Cc}**")
 
-            if Cu < 4 or Cc < 1 or Cc > 3:
-                st.info("Soil appears to be poorly graded.")
+                if Cu < 4 or Cc < 1 or Cc > 3:
+                    st.info("Soil appears to be poorly graded.")
+                else:
+                    st.info("Soil appears to be well graded.")
+            except Exception as e:
+                st.warning("Not enough data to calculate D10, D30, D60. Ensure data covers relevant passing percentages.")
+
+        # For Aggregates: Calculate Uniformity Coefficient, Fineness Modulus, and Zone
+        elif material_type == "Aggregates":
+            # Uniformity Coefficient (Cu) and Fineness Modulus (FM) Calculation
+            sieve_4_75_index = df[np.isclose(df["Sieve Size (mm)"], 4.75)].index
+            if not sieve_4_75_index.empty:
+                percent_passing_4_75 = df.loc[sieve_4_75_index[0], "% Passing"]
+                if percent_passing_4_75 > 50:
+                    st.info("Aggregates appear to be fine-grained (more than 50% passing through 4.75 mm sieve).")
+                else:
+                    st.info("Aggregates appear to be coarse-grained (less than 50% passing through 4.75 mm sieve).")
             else:
-                st.info("Soil appears to be well graded.")
-        except Exception as e:
-            st.warning("Not enough data to calculate D10, D30, D60. Ensure data covers relevant passing percentages.")
+                st.warning("4.75 mm sieve not included in input. Cannot determine basic material type.")
+
+            # Fineness Modulus (FM): Sum of cumulative percentage passing through different sieves
+            try:
+                fm = df["% Passing"].sum() / 100
+                st.subheader("Fineness Modulus Calculation")
+                st.markdown(f"- Fineness Modulus (FM): **{fm:.2f}**")
+
+                # Determining Zone of Aggregates
+                if fm < 2.5:
+                    zone = "Zone I"
+                elif fm >= 2.5 and fm <= 3.0:
+                    zone = "Zone II"
+                elif fm > 3.0 and fm <= 3.5:
+                    zone = "Zone III"
+                else:
+                    zone = "Zone IV"
+
+                st.markdown(f"- Aggregate Zone: **{zone}**")
+
+            except Exception as e:
+                st.warning("Not enough data to calculate Fineness Modulus (FM). Ensure data covers relevant passing percentages.")
+
+            # Uniformity Coefficient (Cu): D60/D10
+            try:
+                interp_func = interp1d(df["% Passing"][::-1], df["Sieve Size (mm)"][::-1], kind='linear', bounds_error=False, fill_value="extrapolate")
+                D10 = float(interp_func(10))
+                D60 = float(interp_func(60))
+
+                Cu = round(D60 / D10, 2)
+
+                st.subheader("Uniformity Coefficient")
+                st.markdown(f"- Uniformity Coefficient (Cu): **{Cu}**")
+
+            except Exception as e:
+                st.warning("Not enough data to calculate Uniformity Coefficient (Cu). Ensure data covers relevant passing percentages.")
