@@ -17,7 +17,7 @@ option = st.sidebar.selectbox(
     "Choose a module",
     (
         "Home",
-        "Concrete Strength Calculator",
+        "Strength of Materials",
         "Soil Classification",
         "Specific Gravity of Cement",
         "Sieve Analysis","Area Converter"
@@ -29,7 +29,7 @@ if option == "Home":
     This web application is designed to assist students, educators, and professionals in performing common civil engineering lab computations and visualizations with ease.
 
     ### 💡 Features:
-    - Predict **Concrete Strength** using CTM data (Machine Learning)
+    - Calculate Various Strengths from Applied Load Data
     - Analyze **Soil Properties** from index limits
     - Calculate **Consistency Limits** for classification
     - Calculate **Specific Gravity** of cement using Le Chatlier Apparatus
@@ -48,28 +48,61 @@ if option == "Home":
     """)
 
 # ---------------- Concrete Strength Calculator ----------------
-if option == "Concrete Strength Calculator":
-    st.header("Concrete Strength from CTM Reading")
 
-    shape = st.selectbox("Choose Shape of Specimen", ["Rectangle", "Circle"])
+if option == "Strength of Materials":
+    st.header("Strength of Materials")
 
-    if shape == "Rectangle":
-        length = st.number_input("Enter Length (mm)", min_value=0.0)
-        breadth = st.number_input("Enter Breadth (mm)", min_value=0.0)
-        area = length * breadth
-    elif shape == "Circle":
-        radius = st.number_input("Enter Radius (mm)", min_value=0.0)
-        area = math.pi * radius * radius
+    strength_type = st.selectbox("Select Type of Strength", 
+                                 ["Compressive Strength", "Tensile Strength", "Transverse Strength of Tile"])
 
-    ctm = st.number_input("Enter CTM Reading (Tonnes)", min_value=0.0)
+    if strength_type == "Compressive Strength":
+        shape = st.selectbox("Choose Shape of Specimen", ["Rectangle", "Circle"])
 
-    if st.button("Calculate Strength"):
-        if area > 0:
-            force_n = ctm * 1000 * 9.81
-            strength = force_n / area
-            st.success(f"Compressive Strength = {strength:.2f} MPa")
-        else:
-            st.error("Area must be greater than 0.")
+        if shape == "Rectangle":
+            length = st.number_input("Enter Length (mm)", min_value=0.0)
+            breadth = st.number_input("Enter Breadth (mm)", min_value=0.0)
+            area = length * breadth
+        elif shape == "Circle":
+            radius = st.number_input("Enter Radius (mm)", min_value=0.0)
+            area = math.pi * radius * radius
+
+        ctm = st.number_input("Enter CTM Reading (Tonnes)", min_value=0.0)
+
+        if st.button("Calculate Strength"):
+            if area > 0:
+                force_n = ctm * 1000 * 9.81
+                strength = force_n / area
+                st.success(f"Compressive Strength = {strength:.2f} N/mm²")
+            else:
+                st.error("Area must be greater than 0.")
+
+    elif strength_type == "Tensile Strength":
+        p = st.number_input("Enter Load from CTM (Tonnes)", min_value=0.0)
+        d = st.number_input("Enter Diameter of Cylinder (mm)", min_value=0.0)
+        l = st.number_input("Enter Length of Cylinder (mm)", min_value=0.0)
+
+        if st.button("Calculate Strength"):
+            if d > 0 and l > 0:
+                force_n = p * 1000 * 9.81
+                strength = (2 * force_n) / (math.pi * d * l)
+                st.success(f"Tensile Strength = {strength:.2f} N/mm²")
+            else:
+                st.error("Diameter and Length must be greater than 0.")
+
+    elif strength_type == "Transverse Strength of Tile":
+        p = st.number_input("Enter Breaking Load (kg)", min_value=0.0)
+        f = st.number_input("Enter Length of Lever Arm (mm)", min_value=0.0)
+        l = st.number_input("Enter Length of Specimen (mm)", min_value=0.0)
+        b = st.number_input("Enter Breadth (mm)", min_value=0.0)
+        t = st.number_input("Enter Thickness (mm)", min_value=0.0)
+
+        if st.button("Calculate Strength"):
+            if b > 0 and t > 0:
+                p_n = p * 9.81  # convert kg to Newtons
+                strength = (3 * p_n * f * l) / (2 * b * t * t)
+                st.success(f"Transverse Strength = {strength:.2f} N/mm²")
+            else:
+                st.error("Breadth and Thickness must be greater than 0.")
 
 # ---------------- Soil Classification ----------------
 elif option == "Soil Classification":
