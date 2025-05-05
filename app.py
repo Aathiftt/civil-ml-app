@@ -22,6 +22,7 @@ option = st.sidebar.selectbox(
         "Specific Gravity of Cement",
         "Sieve Analysis","Area Converter"
     )
+    )
 
 if option == "Home":
     st.markdown("""
