@@ -46,17 +46,17 @@ if option == "Home":
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
 
-    # Styled HTML button as a link
-    st.markdown("""
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="mailto:aathiftt@gmail.com?subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Describe%20your%20issue%20here..." 
-           style="text-decoration: none;">
-            <button style="padding: 0.5em 1em; font-size: 16px; border: none; background-color: #ff4b4b; color: white; border-radius: 5px; cursor: pointer;">
-                🐞 Report an Issue
-            </button>
-        </a>
-    </div>
-    """, unsafe_allow_html=True)
+  st.markdown("""
+<div style="text-align: center; margin-top: 30px;">
+    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=aathiftt@gmail.com&su=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below%3A"
+       target="_blank" style="text-decoration: none;">
+        <button style="padding: 0.5em 1em; font-size: 16px; border: none; background-color: #ff4b4b; color: white; border-radius: 5px; cursor: pointer;">
+            🐞 Report an Issue
+        </button>
+    </a>
+</div>
+""", unsafe_allow_html=True)
+
 
 
 # ----------------Strength of Materials Calculator ----------------
