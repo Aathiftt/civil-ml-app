@@ -46,6 +46,12 @@ if option == "Home":
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
 
+    # Button to report issue
+    if st.button("🐞 Report an Issue"):
+        js = "window.open('mailto:aathiftt@gmail.com?subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App')"
+        st.markdown(f"<script>{js}</script>", unsafe_allow_html=True)
+
+
 # ----------------Strength of Materials Calculator ----------------
 
 if option == "Strength of Materials":
