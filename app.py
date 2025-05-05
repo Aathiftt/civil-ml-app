@@ -54,7 +54,7 @@ if option == "Home":
                 🐞 Report an Issue via Gmail
             </button>
         </a>
-        <p style="margin-top: 15px;">If the above button doesn’t work on your device:</p>
+        <p style="margin-top: 15px;">_________________</p>
     </div>
     """, unsafe_allow_html=True)
 
