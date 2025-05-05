@@ -22,7 +22,6 @@ option = st.sidebar.selectbox(
         "Specific Gravity of Cement",
         "Sieve Analysis","Area Converter"
     )
-)
 
 if option == "Home":
     st.markdown("""
@@ -48,18 +47,36 @@ if option == "Home":
 
     st.markdown("""
     <div style="text-align: center; margin-top: 30px;">
-        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=aathiftt@gmail.com&su=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below%3A"
-           target="_blank" style="text-decoration: none;">
+        <a href="intent://compose?to=aathiftt@gmail.com&subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below%3A#Intent;scheme=mailto;package=com.google.android.gm;end"
+           style="text-decoration: none;">
             <button style="padding: 0.5em 1em; font-size: 16px; border: none; background-color: #ff4b4b; color: white; border-radius: 5px; cursor: pointer;">
-                🐞 Report an Issue
+                🐞 Report an Issue via Gmail
             </button>
         </a>
+        <p style="margin-top: 15px;">If the above button doesn’t work on your device:</p>
     </div>
     """, unsafe_allow_html=True)
 
-
-
-
+    # Add a copy-to-clipboard fallback using streamlit-copybutton (or a basic input + button)
+    import streamlit.components.v1 as components
+    components.html("""
+    <div style="text-align: center;">
+        <input type="text" value="aathiftt@gmail.com" id="copyEmail" readonly
+               style="padding: 8px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc;">
+        <button onclick="copyFunction()" style="margin-left: 10px; padding: 8px; font-size: 14px; border: none; background-color: #007BFF; color: white; border-radius: 5px; cursor: pointer;">
+            Copy Email
+        </button>
+    </div>
+    <script>
+    function copyFunction() {
+        var copyText = document.getElementById("copyEmail");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("Email copied to clipboard!");
+    }
+    </script>
+    """, height=120)
 # ----------------Strength of Materials Calculator ----------------
 
 if option == "Strength of Materials":
