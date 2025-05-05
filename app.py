@@ -58,26 +58,7 @@ if option == "Home":
     </div>
     """, unsafe_allow_html=True)
 
-    # Add a copy-to-clipboard fallback using streamlit-copybutton (or a basic input + button)
-    import streamlit.components.v1 as components
-    components.html("""
-    <div style="text-align: center;">
-        <input type="text" value="aathiftt@gmail.com" id="copyEmail" readonly
-               style="padding: 8px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc;">
-        <button onclick="copyFunction()" style="margin-left: 10px; padding: 8px; font-size: 14px; border: none; background-color: #007BFF; color: white; border-radius: 5px; cursor: pointer;">
-            Copy Email
-        </button>
-    </div>
-    <script>
-    function copyFunction() {
-        var copyText = document.getElementById("copyEmail");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        document.execCommand("copy");
-        alert("Email copied to clipboard!");
-    }
-    </script>
-    """, height=120)
+
 # ----------------Strength of Materials Calculator ----------------
 
 if option == "Strength of Materials":
