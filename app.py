@@ -64,6 +64,9 @@ if option == "Home":
             🐞 Report an Issue
         </a>
     </div>
+    <div style="text-align: center; margin-top: 10px; font-size: 14px; color: #ff4b4b;">
+        <p><strong>Note:</strong> This button works only with Android/iOS devices.</p>
+    </div>
     """, unsafe_allow_html=True)
 
 
