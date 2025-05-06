@@ -485,3 +485,27 @@ elif option == "Workability":
             elif vb_time < 2:
                 st.success("Inference: The concrete exhibits **high workability**, indicating a fluid mix that flows easily and requires little effort to compact.")
 
+#------------------------------------bitumen analysis---------------------------
+elif option == "Bitumen Analysis":
+    st.markdown("""
+    ### 🛠 Bitumen Analysis
+    Select the test you conducted to analyze the properties of bitumen.
+    """)
+
+    test_conducted = st.selectbox(
+        "Select Test Conducted",
+        ("Ductility", "Stripping Value", "Softness Test", "Flash and Fire Point", "Flakiness and Elongation")
+    )
+
+    if test_conducted == "Ductility":
+        breaking_length = st.number_input("Enter the Breaking Length (in cm):", min_value=0.0)
+
+        if st.button("Analyze"):
+            if breaking_length < 40:
+                st.write("🔴 The bitumen is classified as **Low Ductility**. The bitumen has low flexibility and is prone to cracking under low temperatures.")
+            elif 40 <= breaking_length <= 80:
+                st.write("🟡 The bitumen is classified as **Medium Ductility**. This bitumen has moderate flexibility and performs well in moderate temperature conditions.")
+            else:
+                st.write("🟢 The bitumen is classified as **High Ductility**. It has high flexibility, making it suitable for low-temperature applications without cracking.")
+
+
