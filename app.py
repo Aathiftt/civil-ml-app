@@ -79,6 +79,12 @@ if option == "Home":
     - Calculate and Convert Area of a plot
     - Get instant insights and basic soil classification
 
+     ### 🔍 How to Use:
+    1. Select a module from the left sidebar.
+    2. Enter your data in the provided fields.
+    3. View results instantly with charts or classifications.
+    4. Use sample values (if unsure) to try out the modules.
+
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
     
