@@ -486,31 +486,6 @@ elif option == "Workability":
                 st.success("Inference: The concrete exhibits **high workability**, indicating a fluid mix that flows easily and requires little effort to compact.")
 
 #------------------------------------bitumen analysis---------------------------
-import streamlit as st
-
-st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
-st.title("🧱 Civil Engineering Lab Assistant")
-st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
-
-option = st.sidebar.selectbox(
-    "Choose a module",
-    (
-        "Home",
-        "Strength of Materials",
-        "Soil Classification",
-        "Workability",
-        "Specific Gravity of Cement",
-        "Sieve Analysis",
-        "Area Converter",
-        "Bitumen Analysis"
-    )
-)
-
-if option == "Home":
-    st.markdown("""
-    Welcome to the Home section of the app!
-    """)
-
 elif option == "Bitumen Analysis":
     st.markdown("""
     ### 🛠 Bitumen Analysis
