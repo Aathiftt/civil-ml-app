@@ -87,7 +87,7 @@ if option == "Home":
     - Calculate **Specific Gravity** of cement using Le Chatlier Apparatus
     - Perform **Sieve Analysis** and plot **Particle Size Distribution**
     - Calculate and Convert Area of a plot
-    - More Coming soon!
+    - Get instant insights and basic soil classification
 
      ### 🔍 How to Use:
     1. Select a module from the left sidebar.
