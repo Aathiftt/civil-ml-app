@@ -9,8 +9,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-import streamlit as st
-
 # Set up the page configuration
 st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
 
