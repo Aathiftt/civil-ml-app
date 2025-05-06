@@ -7,7 +7,7 @@ import time
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncode
+from sklearn.preprocessing import LabelEncoder
 
 st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
 
