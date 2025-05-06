@@ -9,6 +9,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
+import streamlit as st
+
 st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
 
 st.title("🧱 Civil Engineering Lab Assistant")
@@ -20,7 +22,7 @@ if "option" not in st.session_state:
 
 # Sidebar with uniform vertical buttons
 with st.sidebar:
-    st.markdown("### 📂 Modules")
+    st.markdown("### 📂 Options")
 
     button_style = """
     <style>
@@ -42,12 +44,7 @@ with st.sidebar:
     }
     </style>
     """
-
     st.markdown(button_style, unsafe_allow_html=True)
-
-    def custom_button(label):
-        if st.markdown(f"""<button class="uniform-button">{label}</button>""", unsafe_allow_html=True):
-            st.session_state.option = label
 
     if st.button("Home"):
         st.session_state.option = "Home"
@@ -84,7 +81,8 @@ if option == "Home":
 
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
-      st.markdown("""
+    
+    st.markdown("""
     <div style="text-align: center; margin-top: 30px;">
         <a href="intent://compose?to=aathiftt@gmail.com&subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below%3A#Intent;scheme=mailto;package=com.google.android.gm;end"
            style="text-decoration: none;">
@@ -94,6 +92,7 @@ if option == "Home":
         </a>
     </div>
     """, unsafe_allow_html=True)
+
 # ----------------Strength of Materials Calculator ----------------
 
 if option == "Strength of Materials":
