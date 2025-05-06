@@ -18,9 +18,37 @@ st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 if "option" not in st.session_state:
     st.session_state.option = "Home"
 
-# Sidebar with vertical buttons
+# Sidebar with uniform vertical buttons
 with st.sidebar:
     st.markdown("### 📂 Modules")
+
+    button_style = """
+    <style>
+    .uniform-button {
+        display: block;
+        width: 100%;
+        background-color: #f0f2f6;
+        color: black;
+        border: none;
+        padding: 0.6em 1em;
+        text-align: left;
+        font-size: 16px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+    }
+    .uniform-button:hover {
+        background-color: #e2e2e2;
+    }
+    </style>
+    """
+
+    st.markdown(button_style, unsafe_allow_html=True)
+
+    def custom_button(label):
+        if st.markdown(f"""<button class="uniform-button">{label}</button>""", unsafe_allow_html=True):
+            st.session_state.option = label
+
     if st.button("Home"):
         st.session_state.option = "Home"
     if st.button("Strength of Materials"):
