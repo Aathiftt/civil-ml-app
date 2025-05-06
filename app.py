@@ -63,13 +63,16 @@ if "option" not in st.session_state:
 """, unsafe_allow_html=True)
 
 # Dropdown for options
-option = st.selectbox(
+selected_option = st.selectbox(
     "Select a Module", 
     ["Home", "Strength of Materials", "Soil Classification", "Workability", 
      "Specific Gravity of Cement", "Sieve Analysis", "Area Converter", "Bitumen Analysis"]
 )
 
-# Display content based on selected option
+# Update session state based on new selection
+st.session_state.option = selected_option
+
+# Use the updated value
 option = st.session_state.option
 
 if option == "Home":
