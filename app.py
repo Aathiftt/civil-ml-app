@@ -7,46 +7,39 @@ import time
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncode
 
-# Set up the page configuration
 st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
-
-st.title("🧱 Civil Engineering Lab Assistant")
-st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
 # Initialize session state
 if "option" not in st.session_state:
     st.session_state.option = "Home"
 
-    st.markdown("")
-    st.markdown("""
+# Apply custom styles (this must be outside the if block so it's always applied)
+st.markdown("""
     <style>
-        /* Custom styling for the dropdown */
         .css-1n7v3ny {
             background-color: #f0f2f6;
             border-radius: 5px;
             padding: 8px 12px;
             font-size: 16px;
             border: 1px solid #ddd;
-            transition: all 0.3s ease; /* Smooth transition for focus/hover */
+            transition: all 0.3s ease;
         }
 
         .css-1n7v3ny:focus {
             outline: none;
             border: 1px solid #ff4b4b;
-            box-shadow: 0px 0px 10px rgba(255, 75, 75, 0.6); /* Highlight on focus */
+            box-shadow: 0px 0px 10px rgba(255, 75, 75, 0.6);
         }
 
-        /* Smooth scroll styling */
         .stSelect div.stSelectMenu {
             max-height: 200px;
             overflow-y: auto;
-            scrollbar-width: thin; /* Thin scrollbar */
-            scrollbar-color: #ff4b4b transparent; /* Custom scrollbar color */
+            scrollbar-width: thin;
+            scrollbar-color: #ff4b4b transparent;
         }
 
-        /* For smooth scrolling behavior */
         .stSelect div.stSelectMenu::-webkit-scrollbar {
             width: 8px;
         }
@@ -62,17 +55,18 @@ if "option" not in st.session_state:
     </style>
 """, unsafe_allow_html=True)
 
-# Dropdown for options
+# Page UI
+st.title("🧱 Civil Engineering Lab Assistant")
+st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
+
+# Dropdown and session state handling
 selected_option = st.selectbox(
     "Select a Module", 
     ["Home", "Strength of Materials", "Soil Classification", "Workability", 
      "Specific Gravity of Cement", "Sieve Analysis", "Area Converter", "Bitumen Analysis"]
 )
 
-# Update session state based on new selection
 st.session_state.option = selected_option
-
-# Use the updated value
 option = st.session_state.option
 
 if option == "Home":
