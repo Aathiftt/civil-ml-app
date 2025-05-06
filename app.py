@@ -21,9 +21,7 @@ st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 if "option" not in st.session_state:
     st.session_state.option = "Home"
 
-# Sidebar with a dropdown for options
-with st.sidebar:
-    st.markdown("### 📂 Options")
+    st.markdown("")
     st.markdown("""
     <style>
         /* Custom styling for the dropdown */
