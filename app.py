@@ -23,27 +23,6 @@ if "option" not in st.session_state:
 # Sidebar with uniform vertical buttons
 with st.sidebar:
     st.markdown("### 📂 Options")
-
-    button_style = """
-    <style>
-    .uniform-button {
-        display: block;
-        width: 100%;
-        background-color: #f0f2f6;
-        color: black;
-        border: none;
-        padding: 0.6em 1em;
-        text-align: left;
-        font-size: 16px;
-        border-radius: 4px;
-        margin-bottom: 8px;
-        cursor: pointer;
-    }
-    .uniform-button:hover {
-        background-color: #e2e2e2;
-    }
-    </style>
-    """
     st.markdown(button_style, unsafe_allow_html=True)
 
     if st.button("Home"):
