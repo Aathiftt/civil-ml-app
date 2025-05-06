@@ -85,13 +85,12 @@ if option == "Home":
     st.markdown("""
 <div style="text-align: center; margin-top: 30px;">
     <a href="mailto:aathiftt@gmail.com?subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below:"
-       style="text-decoration: none;">
-        <button style="padding: 0.5em 1em; font-size: 16px; border: none; background-color: #ff4b4b; color: white; border-radius: 5px; cursor: pointer;">
-            🐞 Report an Issue
-        </button>
+       style="display: inline-block; padding: 0.6em 1.2em; font-size: 16px; background-color: #ff4b4b; color: white; border-radius: 5px; text-decoration: none;">
+        🐞 Report an Issue
     </a>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ----------------Strength of Materials Calculator ----------------
 
