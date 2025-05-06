@@ -11,6 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 
 import streamlit as st
 
+# Set up the page configuration
 st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
 
 st.title("🧱 Civil Engineering Lab Assistant")
@@ -20,27 +21,16 @@ st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 if "option" not in st.session_state:
     st.session_state.option = "Home"
 
-# Sidebar with uniform vertical buttons
+# Sidebar with a dropdown for options
 with st.sidebar:
     st.markdown("### 📂 Options")
-    st.markdown(button_style, unsafe_allow_html=True)
-
-    if st.button("Home"):
-        st.session_state.option = "Home"
-    if st.button("Strength of Materials"):
-        st.session_state.option = "Strength of Materials"
-    if st.button("Soil Classification"):
-        st.session_state.option = "Soil Classification"
-    if st.button("Workability"):
-        st.session_state.option = "Workability"
-    if st.button("Specific Gravity of Cement"):
-        st.session_state.option = "Specific Gravity of Cement"
-    if st.button("Sieve Analysis"):
-        st.session_state.option = "Sieve Analysis"
-    if st.button("Area Converter"):
-        st.session_state.option = "Area Converter"
-    if st.button("Bitumen Analysis"):
-        st.session_state.option = "Bitumen Analysis"
+    
+    # Dropdown to choose module
+    st.session_state.option = st.selectbox(
+        "Choose a module", 
+        ["Home", "Strength of Materials", "Soil Classification", "Workability", 
+         "Specific Gravity of Cement", "Sieve Analysis", "Area Converter", "Bitumen Analysis"]
+    )
 
 # Display content based on selected option
 option = st.session_state.option
@@ -48,7 +38,7 @@ option = st.session_state.option
 if option == "Home":
     st.markdown("""
     This web application is designed to assist students, educators, and professionals in performing common civil engineering lab computations and visualizations with ease.
-
+    
     ### 💡 Features:
     - Calculate Various Strengths from Applied Load Data
     - Analyze **Soil Properties** from index limits
@@ -63,18 +53,18 @@ if option == "Home":
     2. Enter your data in the provided fields.
     3. View results instantly with charts or classifications.
     4. Use sample values (if unsure) to try out the modules.
-
+    
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
-    
+
     st.markdown("""
-<div style="text-align: center; margin-top: 30px;">
-    <a href="mailto:aathiftt@gmail.com?subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below:"
-       style="display: inline-block; padding: 0.6em 1.2em; font-size: 16px; background-color: #ff4b4b; color: white; border-radius: 5px; text-decoration: none;">
-        🐞 Report an Issue
-    </a>
-</div>
-""", unsafe_allow_html=True)
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="mailto:aathiftt@gmail.com?subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below:"
+           style="display: inline-block; padding: 0.6em 1.2em; font-size: 16px; background-color: #ff4b4b; color: white; border-radius: 5px; text-decoration: none;">
+            🐞 Report an Issue
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ----------------Strength of Materials Calculator ----------------
