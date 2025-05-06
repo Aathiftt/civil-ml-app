@@ -486,6 +486,31 @@ elif option == "Workability":
                 st.success("Inference: The concrete exhibits **high workability**, indicating a fluid mix that flows easily and requires little effort to compact.")
 
 #------------------------------------bitumen analysis---------------------------
+import streamlit as st
+
+st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
+st.title("🧱 Civil Engineering Lab Assistant")
+st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
+
+option = st.sidebar.selectbox(
+    "Choose a module",
+    (
+        "Home",
+        "Strength of Materials",
+        "Soil Classification",
+        "Workability",
+        "Specific Gravity of Cement",
+        "Sieve Analysis",
+        "Area Converter",
+        "Bitumen Analysis"
+    )
+)
+
+if option == "Home":
+    st.markdown("""
+    Welcome to the Home section of the app!
+    """)
+
 elif option == "Bitumen Analysis":
     st.markdown("""
     ### 🛠 Bitumen Analysis
@@ -494,13 +519,14 @@ elif option == "Bitumen Analysis":
 
     test_conducted = st.selectbox(
         "Select Test Conducted",
-        ("Ductility", "Stripping Value", "Softness Test", "Flash and Fire Point", "Flakiness and Elongation")
+        ("Ductility", "Stripping Value", "Softness Test", "Flash and Fire Point")
     )
 
     if test_conducted == "Ductility":
         breaking_length = st.number_input("Enter the Breaking Length (in cm):", min_value=0.0)
 
         if st.button("Analyze"):
+            # Ductility Analysis based on IS Classification
             if breaking_length < 40:
                 st.write("🔴 The bitumen is classified as **Low Ductility**. The bitumen has low flexibility and is prone to cracking under low temperatures.")
             elif 40 <= breaking_length <= 80:
@@ -508,4 +534,41 @@ elif option == "Bitumen Analysis":
             else:
                 st.write("🟢 The bitumen is classified as **High Ductility**. It has high flexibility, making it suitable for low-temperature applications without cracking.")
 
+    elif test_conducted == "Stripping Value":
+        stripping_value = st.number_input("Enter Stripping Value (percentage):", min_value=0.0)
 
+        if st.button("Analyze"):
+            # Stripping Value Analysis
+            if stripping_value < 0.5:
+                st.write("🟢 The stripping value is within acceptable limits. The bitumen has good adhesion to aggregates.")
+            elif 0.5 <= stripping_value <= 2.0:
+                st.write("🟡 The stripping value is on the borderline. A slight increase in the stripping value can affect the durability of the mixture.")
+            else:
+                st.write("🔴 The stripping value is too high, indicating poor adhesion of bitumen to aggregates. This can lead to premature failure of the pavement.")
+
+    elif test_conducted == "Softness Test":
+        softness_value = st.number_input("Enter Softness Value (in °C):", min_value=0.0)
+
+        if st.button("Analyze"):
+            # Softness Test Analysis
+            if softness_value < 40:
+                st.write("🟢 The bitumen shows good resistance to softening at higher temperatures. It is suitable for high-temperature applications.")
+            elif 40 <= softness_value <= 55:
+                st.write("🟡 The bitumen has moderate resistance to softening. It can perform well in average temperature conditions.")
+            else:
+                st.write("🔴 The bitumen is prone to excessive softening at higher temperatures, which may cause deformation of the pavement.")
+
+    elif test_conducted == "Flash and Fire Point":
+        flash_point = st.number_input("Enter Flash Point (in °C):", min_value=0.0)
+        fire_point = st.number_input("Enter Fire Point (in °C):", min_value=0.0)
+
+        if st.button("Analyze"):
+            # Flash and Fire Point Analysis
+            if flash_point > 230 and fire_point > 250:
+                st.write("🟢 The bitumen has a high flash and fire point, making it safe for high-temperature operations.")
+            elif 180 <= flash_point <= 230 and 200 <= fire_point <= 250:
+                st.write("🟡 The bitumen has moderate flash and fire points. It may not be suitable for extreme temperature conditions.")
+            else:
+                st.write("🔴 The bitumen has a low flash and fire point, posing a risk of fire hazard during handling.")
+
+  
