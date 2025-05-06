@@ -9,24 +9,37 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
+st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
+
 st.title("🧱 Civil Engineering Lab Assistant")
 st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
-# Add a custom function to close the sidebar
-def close_sidebar():
-    st.sidebar.empty()
-    time.sleep(1)  # Simulate delay before sidebar is hidden
+# Initialize session state
+if "option" not in st.session_state:
+    st.session_state.option = "Home"
 
-# Sidebar - Radio button options
-option = st.sidebar.radio(
-    "Choose a module", 
-    ("Home", "Strength of Materials", "Soil Classification", "Workability", 
-     "Specific Gravity of Cement", "Sieve Analysis", "Area Converter", "Bitumen Analysis")
-)
+# Sidebar with vertical buttons
+with st.sidebar:
+    st.markdown("### 📂 Modules")
+    if st.button("Home"):
+        st.session_state.option = "Home"
+    if st.button("Strength of Materials"):
+        st.session_state.option = "Strength of Materials"
+    if st.button("Soil Classification"):
+        st.session_state.option = "Soil Classification"
+    if st.button("Workability"):
+        st.session_state.option = "Workability"
+    if st.button("Specific Gravity of Cement"):
+        st.session_state.option = "Specific Gravity of Cement"
+    if st.button("Sieve Analysis"):
+        st.session_state.option = "Sieve Analysis"
+    if st.button("Area Converter"):
+        st.session_state.option = "Area Converter"
+    if st.button("Bitumen Analysis"):
+        st.session_state.option = "Bitumen Analysis"
 
-# If option is selected, simulate sidebar closing
-if option:
-    close_sidebar()
+# Display content based on selected option
+option = st.session_state.option
 
 if option == "Home":
     st.markdown("""
@@ -41,28 +54,8 @@ if option == "Home":
     - Calculate and Convert Area of a plot
     - Get instant insights and basic soil classification
 
-    ### 🔍 How to Use:
-    1. Select a module from the left sidebar.
-    2. Enter your data in the provided fields.
-    3. View results instantly with charts or classifications.
-    4. Use sample values (if unsure) to try out the modules.
-
     👉 Explore each section using the sidebar. Happy Testing!  
     """)
-
-    st.markdown("""
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="intent://compose?to=aathiftt@gmail.com&subject=Issue%20Report%20-%20Civil%20Lab%20Web%20App&body=Please%20describe%20the%20issue%20you%20faced%20in%20detail%20below%3A#Intent;scheme=mailto;package=com.google.android.gm;end"
-           style="text-decoration: none;">
-            <button style="padding: 0.5em 1em; font-size: 16px; border: none; background-color: #ff4b4b; color: white; border-radius: 5px; cursor: pointer;">
-                🐞 Report an Issue via Gmail
-            </button>
-        </a>
-        <p style="margin-top: 15px;">_________________</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-
 # ----------------Strength of Materials Calculator ----------------
 
 if option == "Strength of Materials":
