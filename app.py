@@ -9,20 +9,24 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-st.set_page_config(page_title="Civil Engineering Calculator", layout="wide")
 st.title("🧱 Civil Engineering Lab Assistant")
 st.subheader("Welcome to the Civil Engineering Analysis Toolkit")
 
-option = st.sidebar.selectbox(
-    "Choose a module",
-    (
-        "Home",
-        "Strength of Materials",
-        "Soil Classification","Workability",
-        "Specific Gravity of Cement",
-        "Sieve Analysis","Area Converter"
-    )
-    )
+# Add a custom function to close the sidebar
+def close_sidebar():
+    st.sidebar.empty()
+    time.sleep(1)  # Simulate delay before sidebar is hidden
+
+# Sidebar - Radio button options
+option = st.sidebar.radio(
+    "Choose a module", 
+    ("Home", "Strength of Materials", "Soil Classification", "Workability", 
+     "Specific Gravity of Cement", "Sieve Analysis", "Area Converter", "Bitumen Analysis")
+)
+
+# If option is selected, simulate sidebar closing
+if option:
+    close_sidebar()
 
 if option == "Home":
     st.markdown("""
