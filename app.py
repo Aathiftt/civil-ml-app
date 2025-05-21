@@ -15,7 +15,6 @@ st.set_page_config(page_title="Civil Lab Assistant", layout="centered")
 if "option" not in st.session_state:
     st.session_state.option = "Home"
 
-# Apply custom styles (this must be outside the if block so it's always applied)
 st.markdown("""
     <style>
         .css-1n7v3ny {
