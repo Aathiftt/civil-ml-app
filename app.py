@@ -88,7 +88,7 @@ if option == "Home":
     3. View results instantly with charts or classifications.
     4. Use sample values (if unsure) to try out the modules.
     
-    👉 Explore each section using the sidebar. Happy Testing!  
+    👉 Explore each section using the dropdown bar above. Happy Testing!  
     """)
 
     st.markdown("""
